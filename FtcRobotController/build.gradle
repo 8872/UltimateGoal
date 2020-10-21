@@ -64,5 +64,8 @@ dependencies {
      * External
      */
     implementation fileTree(include: ['*.jar'], dir: 'libs')
-    implementation 'com.acmerobotics.dashboard:dashboard:0.3.10'
+    implementation('com.acmerobotics.dashboard:dashboard:0.3.10') {
+        exclude group: 'androidx.annotation', module: 'annotation'
+        exclude group: 'org.firstinspires.ftc'
+    }
 }
