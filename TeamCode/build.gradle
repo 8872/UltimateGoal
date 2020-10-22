@@ -19,4 +19,6 @@ dependencies {
         exclude group: 'androidx.annotation', module: 'annotation'
         exclude group: 'org.firstinspires.ftc'
     }
+
+    implementation 'com.acmerobotics.roadrunner:core:0.5.2'
 }
