@@ -1,15 +1,15 @@
-package org.firstinspires.ftc.teamcode.testchassis;
+package org.firstinspires.ftc.teamcode.ultimategoal;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import org.firstinspires.ftc.teamcode.OpMode8872;
+import org.firstinspires.ftc.teamcode.ultimategoal.UltimateGoalOpMode;
 
 @TeleOp
-public class MecanumDriveOnly extends OpMode8872 {
+public class UltimateGoalDrive extends UltimateGoalOpMode {
 
-    private boolean slowMode = false, accelerating = false;
+    private boolean slowMode, accelerating;
 
-    private boolean lastAState = false;
-    private double acceleratePower = 0.0;
+    private boolean lastAState;
+    private double acceleratePower = 0;
 
 
     @Override
@@ -67,6 +67,8 @@ public class MecanumDriveOnly extends OpMode8872 {
             slowMode = !slowMode;
         }
         lastAState = gamepad1.a;
+
+        intake.setPower(gamepad1.right_trigger);
     }
 
     @Override
@@ -74,9 +76,6 @@ public class MecanumDriveOnly extends OpMode8872 {
         super.composeTelemetry();
         telemetry.addLine().addData("Accelerating", () -> accelerating);
         telemetry.addLine().addData("Slow Mode", () -> slowMode);
+        telemetry.addLine().addData("Intake", () -> intake.getPower());
     }
-
-    @Override
-    protected void initHardwareDevices() {}
-
 }

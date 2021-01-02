@@ -1,0 +1,11 @@
+package org.firstinspires.ftc.teamcode.ultimategoal;
+
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+
+@Autonomous(name = "UltiGoalBlue", group = "drive")
+public class UltiGoalBlue extends UltiGoalShoot {
+    @Override
+    public void runOpMode() throws InterruptedException {
+        runOpMode(true);
+    }
+}
