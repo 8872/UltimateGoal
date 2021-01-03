@@ -26,8 +26,8 @@ public class MotorPowerSetter extends UltimateGoalOpMode {
         telemetry.addLine().addData(name2, () -> rpm2);
 
         // Change these two motors based on where you have it plugged in
-        shooter1.setPower(rpm1 / 6000.0);
-        shooter2.setPower(rpm2 / 6000.0);
+        shooterFront.setPower(rpm1 / 6000.0);
+        shooterBack.setPower(rpm2 / 6000.0);
 
         if (gamepad1.x && !lastXState1 & motorChangingSetting.equals("Motor1")) {
             motorChangingSetting = "Motor2";
