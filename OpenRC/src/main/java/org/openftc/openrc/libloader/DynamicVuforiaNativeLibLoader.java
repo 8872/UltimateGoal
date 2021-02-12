@@ -181,7 +181,7 @@ public class DynamicVuforiaNativeLibLoader
     {
         libInProtectedStorage = new File(rcActivity.getFilesDir() + "/extra/libVuforiaReal.so");
         protectedExtraFolder = new File(rcActivity.getFilesDir() + "/extra/");
-        libOnSdcard = new File(Environment.getExternalStorageDirectory() + "/FIRST/libVuforia.so");
+        libOnSdcard = new File(Environment.getExternalStorageDirectory() + "/FIRST/vision/libVuforia.so");
 
         /*
          * First, check to see if it exists in the protected storage
