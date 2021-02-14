@@ -82,6 +82,67 @@ public abstract class OpMode8872 extends OpMode {
         telemetry.addLine().addData("rightRear", () -> round(rightRear.getPower()));
     }
 
+    protected void mechanumDrive(boolean slowMode) {
+        mechanumDrive(slowMode, false, false);
+    }
+
+    protected void mechanumDrive(boolean slowMode, boolean xDisable, boolean yDisable) {
+        double r;
+        double robotAngle;
+        if (xDisable) {
+            r = Math.hypot(-gamepad1.left_stick_y, 0);
+            robotAngle = Math.atan2(-gamepad1.left_stick_y, 0) - Math.PI / 4;
+        } else if (yDisable) {
+            r = Math.hypot(0, gamepad1.left_stick_x);
+            robotAngle = Math.atan2(0, gamepad1.left_stick_x) - Math.PI / 4;
+        } else {
+            r = Math.hypot(-gamepad1.left_stick_y, gamepad1.left_stick_x);
+            robotAngle = Math.atan2(-gamepad1.left_stick_y, gamepad1.left_stick_x) - Math.PI / 4;
+        }
+        double rightX = gamepad1.right_stick_x;
+        double v1 = (r * Math.cos(robotAngle) + rightX) * Math.sqrt(2);
+        double v2 = (r * Math.sin(robotAngle) - rightX) * Math.sqrt(2);
+        double v3 = (r * Math.sin(robotAngle) + rightX) * Math.sqrt(2);
+        double v4 = (r * Math.cos(robotAngle) - rightX) * Math.sqrt(2);
+
+        if (slowMode) {
+            leftFront.setPower(v1 / 2);
+            rightFront.setPower(v2 / 2);
+            leftRear.setPower(v3 / 2);
+            rightRear.setPower(v4 / 2);
+        } else {
+            leftFront.setPower(v1);
+            rightFront.setPower(v2);
+            leftRear.setPower(v3);
+            rightRear.setPower(v4);
+        }
+    }
+
+    protected double accelerate(double acceleratePower) {
+        if (gamepad1.x && acceleratePower < 0.5) {
+            acceleratePower += 0.001;
+            rightFront.setPower(acceleratePower);
+            rightRear.setPower(acceleratePower);
+            leftRear.setPower(acceleratePower);
+            leftFront.setPower(acceleratePower);
+        } else if (!gamepad1.x && acceleratePower > 0) {
+            acceleratePower -= 0.001;
+            if (acceleratePower <= 0) {
+                acceleratePower = 0;
+            }
+            rightFront.setPower(acceleratePower); // maybe make these negative
+            rightRear.setPower(acceleratePower);
+            leftRear.setPower(acceleratePower);
+            leftFront.setPower(acceleratePower);
+        }
+
+        return acceleratePower;
+    }
+
+    protected static double toRPM(double degreesPerSecond) {
+        return degreesPerSecond / 6;
+    }
+
     private static double round(double value) {
         return round(value, 4);
     }

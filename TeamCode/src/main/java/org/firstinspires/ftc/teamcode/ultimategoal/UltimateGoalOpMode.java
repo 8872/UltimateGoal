@@ -1,30 +1,67 @@
 package org.firstinspires.ftc.teamcode.ultimategoal;
 
-import com.qualcomm.robotcore.hardware.*;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.Servo;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.OpMode8872;
 
-public abstract class UltimateGoalOpMode extends OpMode8872 {
+abstract class UltimateGoalOpMode extends OpMode8872 {
 
-    protected DcMotorEx shooterFront, shooterBack;
+    protected final int wobbleGoalMotorGearRatio = 2;
+    protected final int wobbleGoalMotorTicksPerDegree = (5264 / 360) * wobbleGoalMotorGearRatio;
+
+    protected DcMotorEx shooterFront, shooterBack, wobbleGoalMotor;
     protected DcMotor intake;
 
-    protected Servo boxServo, ringServo;
+    protected Servo boxServo, ringServo, wobbleServo;
+
 
     @Override
     protected void initHardwareDevices() {
-//        shooter1 = (DcMotorEx) hardwareMap.dcMotor.get("shooter1");
-//        shooter2 = (DcMotorEx) hardwareMap.dcMotor.get("shooter2");
-        shooter1 = NullDcMotor.INSTANCE;
-        shooter2 = NullDcMotor.INSTANCE;
+        shooterFront = (DcMotorEx) hardwareMap.dcMotor.get("shooterFront");
+        shooterBack = (DcMotorEx) hardwareMap.dcMotor.get("shooterBack");
+        wobbleGoalMotor = (DcMotorEx) hardwareMap.dcMotor.get("wobbleGoalMotor");
+
         intake = hardwareMap.dcMotor.get("intake");
-//        boxServo = hardwareMap.servo.get("boxServo");
-//        ringServo = hardwareMap.servo.get("boxServo");
+        boxServo = hardwareMap.servo.get("boxServo");
+        ringServo = hardwareMap.servo.get("ringServo");
+        wobbleServo = hardwareMap.servo.get("wobbleServo");
+
+        shooterFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        shooterBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        wobbleGoalMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        wobbleGoalMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         shooterFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         shooterBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        wobbleGoalMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        shooterFront.setDirection(DcMotorSimple.Direction.REVERSE);
+        shooterBack.setDirection(DcMotorSimple.Direction.REVERSE);
         intake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         intake.setDirection(DcMotorSimple.Direction.REVERSE);
-        shooterFront.setPower(0);
-        shooterBack.setPower(0);
+        wobbleGoalMotor.setTargetPositionTolerance(110);
+        boxServo.setDirection(Servo.Direction.REVERSE);
+
+        boxServo.setPosition(0.35);
+        ringServo.setPosition(0);
+
+        // Don't put a random number in there will break whole mechanism
+//        wobbleGoalMotor.setTargetPosition();
+//        wobbleGoalMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+    }
+
+    @Override
+    protected void composeTelemetry() {
+        super.composeTelemetry();
+        telemetry.addLine().addData("Intake Power", () -> intake.getPower());
+        telemetry.addLine().addData("Launcher Front Velocity", () -> shooterFront.getVelocity(AngleUnit.DEGREES));
+        telemetry.addLine().addData("Launcher Back Velocity", () -> shooterBack.getVelocity(AngleUnit.DEGREES));
+        telemetry.addLine().addData("Box Servo", () -> boxServo.getPosition());
+        telemetry.addLine().addData("Ring Servo", () -> ringServo.getPosition());
+        telemetry.addLine().addData("Wobble Goal Mechanism", () -> wobbleGoalMotor.getCurrentPosition() / wobbleGoalMotorTicksPerDegree);
+
     }
 
 }
