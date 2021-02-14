@@ -3,11 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorController;
-import com.qualcomm.robotcore.hardware.HardwareDevice;
-import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
 
-import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
@@ -43,14 +39,10 @@ public abstract class OpMode8872 extends OpMode {
         telemetry.update();
 
         // Define and Initialize Motors
-//        leftRear = hardwareMap.dcMotor.get("leftRear");
-//        rightRear = hardwareMap.dcMotor.get("rightRear");
-//        leftFront = hardwareMap.dcMotor.get("leftFront");
-//        rightFront = hardwareMap.dcMotor.get("rightFront");
-        leftRear = NullDcMotor.INSTANCE;
-        rightRear = NullDcMotor.INSTANCE;
-        leftFront = NullDcMotor.INSTANCE;
-        rightFront = NullDcMotor.INSTANCE;
+        leftRear = hardwareMap.dcMotor.get("leftRear");
+        rightRear = hardwareMap.dcMotor.get("rightRear");
+        leftFront = hardwareMap.dcMotor.get("leftFront");
+        rightFront = hardwareMap.dcMotor.get("rightFront");
 
 //        leftRear.setDirection(DcMotor.Direction.REVERSE); // uncomment if using AndyMark motors
 //        leftFront.setDirection(DcMotor.Direction.REVERSE); // uncomment if using AndyMark motors
