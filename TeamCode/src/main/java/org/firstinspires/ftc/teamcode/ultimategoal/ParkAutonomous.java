@@ -1,15 +1,20 @@
-/*package org.firstinspires.ftc.teamcode.ultimategoal;
+package org.firstinspires.ftc.teamcode.ultimategoal;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import org.firstinspires.ftc.teamcode.testchassis.rrunner.SampleMecanumDrive;
+import org.firstinspires.ftc.teamcode.rrunner.SampleMecanumDrive;
+import org.firstinspires.ftc.teamcode.ultimategoal.rrunner.UltimateGoalDriveConstants;
 
-public abstract class UltiGoalShoot extends LinearOpMode {
+@Disabled
+@Autonomous
+public class ParkAutonomous extends LinearOpMode {
 
     public void runOpMode(boolean blueSide) throws InterruptedException {
-        SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
+        SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap, UltimateGoalDriveConstants.INSTANCE);
 
         final int y = blueSide ? 1 : -1;
 
@@ -46,8 +51,12 @@ public abstract class UltiGoalShoot extends LinearOpMode {
         Thread.sleep(2000);// TODO: shoot rings
 
         drive.followTrajectory(park);
-        }
     }
 
+    @Override
+    public void runOpMode() throws InterruptedException {
 
-*/
+    }
+}
+
+

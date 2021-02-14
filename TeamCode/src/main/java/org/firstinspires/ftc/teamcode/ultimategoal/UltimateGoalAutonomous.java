@@ -1,78 +1,110 @@
 package org.firstinspires.ftc.teamcode.ultimategoal;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import org.firstinspires.ftc.teamcode.testchassis.rrunner.SampleMecanumDrive;
+import org.firstinspires.ftc.teamcode.rrunner.SampleMecanumDrive;
+import org.firstinspires.ftc.teamcode.ultimategoal.rrunner.UltimateGoalDriveConstants;
 
-public abstract class UltimateGoalAutonomous extends LinearOpMode {
+@Config
+public abstract class UltimateGoalAutonomous extends UltimateGoalOpMode {
 
-    public void runOpMode(boolean blueSide) throws InterruptedException {
-        SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
+    private final SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap, UltimateGoalDriveConstants.INSTANCE);
 
-        final int y = blueSide ? 1 : -1;
+    private final Trajectory shootingLocation = drive.trajectoryBuilder(new Pose2d(-58, 17 * yMult(), 0))
+        .lineTo(new Vector2d(-22, 17 * yMult()))
+        .splineToConstantHeading(new Vector2d(shooterEndLocX, shootingEndLocY * yMult()), 90 * yMult())
+        .build();
 
-        drive.setPoseEstimate(new Pose2d(0, 0));
-
-        drive.followTrajectory(drive.trajectoryBuilder(new Pose2d(0, 0)).lineTo(new Vector2d(-58, 17 * y)).build());
-
-        Thread.sleep(1000);
-
-        Trajectory shootingLocation = drive.trajectoryBuilder(new Pose2d(-58, 17 * y))
-            .lineTo(new Vector2d(-22, 17 * y))
-            .splineToConstantHeading(new Vector2d(-5, 35 * y), 90 * y).build();
-
-        Trajectory squareA = drive.trajectoryBuilder(shootingLocation.end())
-            .lineTo(new Vector2d(4, 60 * y))
-            .build();
-        Trajectory squareB = drive.trajectoryBuilder(shootingLocation.end())
-            .lineTo(new Vector2d(24, 35 * y))
-            .build();
-        Trajectory squareC = drive.trajectoryBuilder(shootingLocation.end())
-            .lineTo(new Vector2d(50, 60 * y))
-            .build();
+    private final Trajectory squareA = drive.trajectoryBuilder(shootingLocation.end())
+        .lineTo(new Vector2d(4, 60 * yMult()))
+        .build();
+    private final Trajectory squareB = drive.trajectoryBuilder(shootingLocation.end())
+        .lineTo(new Vector2d(24, 35 * yMult()))
+        .build();
+    private final Trajectory squareC = drive.trajectoryBuilder(shootingLocation.end())
+        .lineTo(new Vector2d(50, 60 * yMult()))
+        .build();
 // x value has to be between 15 and 6 to be parked properly
 
-        Trajectory parkB = drive.trajectoryBuilder(squareB.end())
-            .lineTo(new Vector2d(15, 35 * y))
-            .build();
-        Trajectory parkC = drive.trajectoryBuilder(squareC.end())
-            .lineTo(new Vector2d(15, 35 * y))
-            .build();
-
-        waitForStart();
-
-        telemetry.update();
-
-        System.out.println();
+    private final Trajectory parkB = drive.trajectoryBuilder(squareB.end())
+        .lineTo(new Vector2d(15, 35 * yMult()))
+        .build();
+    private final Trajectory parkC = drive.trajectoryBuilder(squareC.end())
+        .lineTo(new Vector2d(15, 35 * yMult()))
+        .build();
 
 
-        if (isStopRequested()) return;
+    public static int turnAfterShoot = -2;
+    public static int shootingEndLocY = 24;
+    public static int shooterEndLocX = 8;
+    public static int rpm1 = 3500;
+    public static int shootWait = 6000;
 
-        System.out.println();
+    /**
+     * @return the integer to multiply all y position values by
+     */
+    protected abstract int yMult();
 
+    @Override
+    protected void initHardwareDevices() {
+        super.initHardwareDevices();
+
+
+        // drive.setPoseEstimate(new Pose2d(0, 0));
+
+        // drive.followTrajectory(drive.trajectoryBuilder(new Pose2d(0, 0)).lineTo(new Vector2d(-58, 17 * y)).build());
+
+        drive.setPoseEstimate(new Pose2d(-58, 17 * yMult(), 0));
+        sleep(1000);
+    }
+
+    @Override
+    public void start() {
+        super.start();
         // TODO: speed up shooting wheels
+        shooterBack.setVelocity(rpm1 * 28.0 / 60); //convert to encoder ticks
+        shooterFront.setVelocity(rpm1 * 28.0 / 60);
 
+        boxServo.setPosition(0.75);
         drive.followTrajectory(shootingLocation);
+        telemetry.addLine().addData("Heading: ", drive.getRawExternalHeading());
+        telemetry.update();
+        drive.turn(Math.toRadians(turnAfterShoot));
+        sleep(100);// TODO: shoot rings
 
-        Thread.sleep(2000);// TODO: shoot rings
+        for (int i = 0; i < 3; i++) {
+            ringServo.setPosition(1);
+            sleep(300);
+            ringServo.setPosition(0);
+            sleep(shootWait);
+        }
 
-        int ringsDetected = 4;
+        shooterFront.setVelocity(0);
+        shooterBack.setVelocity(0);
+
+        int ringsDetected = 2;
 
         if (ringsDetected == 0) {
             drive.followTrajectory(squareA);
-            Thread.sleep(1000); // drop wobble goal
+            sleep(1000); // drop wobble goal
             // already parked
         } else if (ringsDetected == 1) {
             drive.followTrajectory(squareB);
-            Thread.sleep(1000); // drop wobble goal
+            sleep(1000); // drop wobble goal
             drive.followTrajectory(parkB);
-        } else if (ringsDetected == 4) {
+        } else if (ringsDetected == 2) {
             drive.followTrajectory(squareC);
-            Thread.sleep(1000); // drop wobble goal
+            sleep(1000); // drop wobble goal
             drive.followTrajectory(parkC);
         }
+        telemetry.addLine().addData("Heading ", drive.getRawExternalHeading());
+        telemetry.update();
+        sleep(3000);
+        requestOpModeStop();
     }
 
+    @Override
+    public void loop() { }
 }
