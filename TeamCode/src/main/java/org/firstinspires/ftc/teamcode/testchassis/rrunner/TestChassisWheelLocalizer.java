@@ -1,8 +1,6 @@
 package org.firstinspires.ftc.teamcode.testchassis.rrunner;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.XmlRes;
-import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.localization.ThreeTrackingWheelLocalizer;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -25,14 +23,15 @@ import java.util.List;
  *    \--------------/
  *
  */
-@Config
-public class StandardTrackingWheelLocalizer extends ThreeTrackingWheelLocalizer {
+//@Config
+public class TestChassisWheelLocalizer extends ThreeTrackingWheelLocalizer {
     public static double TICKS_PER_REV = 8192;
     public static double WHEEL_RADIUS = 0.748031; // in - 19mm, 38 millimeter odometry wheels
     public static double GEAR_RATIO = 1; // output (wheel) speed / input (encoder) speed
 
-    public static double LATERAL_DISTANCE = 12.9583; // in; distance between the left and right wheels
-    public static double FORWARD_OFFSET = -4.75; // in; offset of the lateral wheel
+    // Need to be changed for test chassis
+    public static double LATERAL_DISTANCE = 14.75; // in; distance between the left and right wheels
+    public static double FORWARD_OFFSET = -1.25; // in; offset of the lateral wheel
 
     private final Encoder leftEncoder;
     private final Encoder rightEncoder;
@@ -43,7 +42,7 @@ public class StandardTrackingWheelLocalizer extends ThreeTrackingWheelLocalizer 
     public static double Y_MULTIPLIER = 1; // Multiplier in the Y direction
 
 
-    public StandardTrackingWheelLocalizer(HardwareMap hardwareMap) {
+    public TestChassisWheelLocalizer(HardwareMap hardwareMap) {
         super(Arrays.asList(
             new Pose2d(0, LATERAL_DISTANCE / 2, 0), // left
             new Pose2d(0, -LATERAL_DISTANCE / 2, 0), // right
@@ -69,7 +68,7 @@ public class StandardTrackingWheelLocalizer extends ThreeTrackingWheelLocalizer 
         return Arrays.asList(
                 encoderTicksToInches(leftEncoder.getCurrentPosition()) * X_MULTIPLIER,
                 encoderTicksToInches(rightEncoder.getCurrentPosition()) * X_MULTIPLIER,
-                encoderTicksToInches(frontEncoder.getCurrentPosition())* Y_MULTIPLIER
+            encoderTicksToInches(frontEncoder.getCurrentPosition()) * Y_MULTIPLIER
         );
     }
 

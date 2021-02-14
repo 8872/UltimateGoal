@@ -5,19 +5,19 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import org.firstinspires.ftc.teamcode.testchassis.rrunner.SampleMecanumDrive;
+import org.firstinspires.ftc.teamcode.DriveConstants;
 
 /*
- * This is a simple routine to test translational drive capabilities.
+ * This is a simple routine toadb  test translational drive capabilities.
  */
 @Config
 @Autonomous(group = "drive")
 public class StrafeTest extends LinearOpMode {
-    public static double DISTANCE = 45; // in
+    public static double DISTANCE = 60; // in
 
     @Override
     public void runOpMode() {
-        SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
+        SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap, DriveConstants.DEFAULT);
 
         Trajectory trajectory = drive.trajectoryBuilder(new Pose2d())
             .strafeRight(DISTANCE)
