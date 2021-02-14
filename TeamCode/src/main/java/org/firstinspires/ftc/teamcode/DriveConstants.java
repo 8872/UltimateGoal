@@ -5,11 +5,11 @@ import com.acmerobotics.roadrunner.localization.Localizer;
 import com.acmerobotics.roadrunner.trajectory.constraints.DriveConstraints;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
-import org.firstinspires.ftc.teamcode.testchassis.rrunner.TestChassisDriveConstants;
+import org.firstinspires.ftc.teamcode.ultimategoal.rrunner.UltimateGoalDriveConstants;
 
 public abstract class DriveConstants {
 
-    public static final DriveConstants DEFAULT = TestChassisDriveConstants.INSTANCE;
+    public static final DriveConstants DEFAULT = UltimateGoalDriveConstants.INSTANCE;
 
 
     public final double LATERAL_MULTIPLIER;
