@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import org.firstinspires.ftc.teamcode.ultimategoal.rrunner.UltimateGoalDriveConstants;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -10,9 +11,10 @@ import java.math.RoundingMode;
 public abstract class OpMode8872 extends OpMode {
 
 
+    public static final DriveConstants DEFAULT_CONSTANTS = UltimateGoalDriveConstants.INSTANCE;
     /**
      * Calibration is not necessary, unless full accuracy of IMU is immediately needed
-     *
+     * <p>
      * See the calibration sample opmode
      * {@link org.firstinspires.ftc.robotcontroller.external.samples.SensorBNO055IMUCalibration}
      */

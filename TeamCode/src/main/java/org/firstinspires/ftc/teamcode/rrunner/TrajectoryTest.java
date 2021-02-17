@@ -6,7 +6,7 @@ import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import org.firstinspires.ftc.teamcode.DriveConstants;
+import org.firstinspires.ftc.teamcode.OpMode8872;
 
 /*
 wee wee
@@ -25,7 +25,7 @@ public class TrajectoryTest extends LinearOpMode {
     public static double y2 = -24;
     @Override
     public void runOpMode() {
-        SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap, DriveConstants.DEFAULT);
+        SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap, OpMode8872.DEFAULT_CONSTANTS);
 
         waitForStart();
         Pose2d startPose = new Pose2d(initialX, initialY, Math.toRadians(heading1));

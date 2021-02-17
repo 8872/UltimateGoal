@@ -5,12 +5,9 @@ import com.acmerobotics.roadrunner.localization.Localizer;
 import com.acmerobotics.roadrunner.trajectory.constraints.DriveConstraints;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
-import org.firstinspires.ftc.teamcode.ultimategoal.rrunner.UltimateGoalDriveConstants;
+import org.jetbrains.annotations.NotNull;
 
 public abstract class DriveConstants {
-
-    public static final DriveConstants DEFAULT = UltimateGoalDriveConstants.INSTANCE;
-
 
     public final double LATERAL_MULTIPLIER;
     public final PIDCoefficients TRANSLATIONAL_PID;
@@ -53,4 +50,26 @@ public abstract class DriveConstants {
     public abstract double getMotorVelocityF(double ticksPerSecond);
 
     public abstract Localizer createLocalizer(HardwareMap hardwareMap);
+
+    @NotNull
+    @Override
+    public String toString() {
+        return getClass().getSimpleName() + "{" +
+            "LATERAL_MULTIPLIER=" + LATERAL_MULTIPLIER +
+            ", TRANSLATIONAL_PID=" + TRANSLATIONAL_PID +
+            ", HEADING_PID=" + HEADING_PID +
+            ", TICKS_PER_REV=" + TICKS_PER_REV +
+            ", MAX_RPM=" + MAX_RPM +
+            ", RUN_USING_ENCODER=" + RUN_USING_ENCODER +
+            ", MOTOR_VELO_PID=" + MOTOR_VELO_PID +
+            ", WHEEL_RADIUS=" + WHEEL_RADIUS +
+            ", GEAR_RATIO=" + GEAR_RATIO +
+            ", TRACK_WIDTH=" + TRACK_WIDTH +
+            ", kV=" + kV +
+            ", kA=" + kA +
+            ", kStatic=" + kStatic +
+            ", BASE_CONSTRAINTS=" + BASE_CONSTRAINTS +
+            ", LATERAL_DISTANCE=" + LATERAL_DISTANCE +
+            '}';
+    }
 }

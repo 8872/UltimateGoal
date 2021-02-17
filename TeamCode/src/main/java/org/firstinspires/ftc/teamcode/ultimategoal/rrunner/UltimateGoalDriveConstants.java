@@ -22,9 +22,9 @@ import org.firstinspires.ftc.teamcode.DriveConstants;
 @Config
 public class UltimateGoalDriveConstants extends DriveConstants {
 
-    public static final UltimateGoalDriveConstants INSTANCE = new UltimateGoalDriveConstants();
-
-    private UltimateGoalDriveConstants() {super(LATERAL_MULTIPLIER, TRANSLATIONAL_PID, HEADING_PID, TICKS_PER_REV, MAX_RPM, RUN_USING_ENCODER, MOTOR_VELO_PID, WHEEL_RADIUS, GEAR_RATIO, TRACK_WIDTH, kV, kA, kStatic, BASE_CONSTRAINTS, UltimateGoalWheelLocalizer.LATERAL_DISTANCE);}
+    private UltimateGoalDriveConstants() {
+        super(LATERAL_MULTIPLIER, TRANSLATIONAL_PID, HEADING_PID, TICKS_PER_REV, MAX_RPM, RUN_USING_ENCODER, MOTOR_VELO_PID, WHEEL_RADIUS, GEAR_RATIO, TRACK_WIDTH, kV, kA, kStatic, BASE_CONSTRAINTS, UltimateGoalWheelLocalizer.LATERAL_DISTANCE);
+    }
 
     private static final double LATERAL_MULTIPLIER = 1.33;
     private static final PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(12, 1, 1);
@@ -46,7 +46,7 @@ public class UltimateGoalDriveConstants extends DriveConstants {
      * from DriveVelocityPIDTuner.
      */
     private static final boolean RUN_USING_ENCODER = false;
-    private static final PIDFCoefficients MOTOR_VELO_PID = new PIDFCoefficients(0, 0, 0, INSTANCE.getMotorVelocityF(MAX_RPM / 60 * TICKS_PER_REV));
+    private static final PIDFCoefficients MOTOR_VELO_PID = new PIDFCoefficients(0, 0, 0, getMotorVelocityFImpl(MAX_RPM / 60 * TICKS_PER_REV));
 
     /*
      * These are physical constants that can be determined from your robot (including the track
@@ -101,14 +101,20 @@ public class UltimateGoalDriveConstants extends DriveConstants {
         return rpm * GEAR_RATIO * 2 * Math.PI * WHEEL_RADIUS / 60.0;
     }
 
-    @Override
-    public double getMotorVelocityF(double ticksPerSecond) {
+    private static double getMotorVelocityFImpl(double ticksPerSecond) {
         // see https://docs.google.com/document/d/1tyWrXDfMidwYyP_5H4mZyVgaEswhOC35gvdmP-V-5hA/edit#heading=h.61g9ixenznbx
         return 32767 / ticksPerSecond;
+    }
+
+    @Override
+    public double getMotorVelocityF(double ticksPerSecond) {
+        return getMotorVelocityFImpl(ticksPerSecond);
     }
 
     @Override
     public Localizer createLocalizer(HardwareMap hardwareMap) {
         return new UltimateGoalWheelLocalizer(hardwareMap);
     }
+
+    public static final UltimateGoalDriveConstants INSTANCE = new UltimateGoalDriveConstants();
 }

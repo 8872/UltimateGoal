@@ -13,6 +13,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.RobotLog;
 import org.firstinspires.ftc.teamcode.DriveConstants;
+import org.firstinspires.ftc.teamcode.OpMode8872;
 
 import java.util.Objects;
 
@@ -37,7 +38,7 @@ import java.util.Objects;
 @Autonomous(group = "drive")
 public class ManualFeedforwardTuner extends LinearOpMode {
 
-    private static final DriveConstants constants = DriveConstants.DEFAULT;
+    private static final DriveConstants constants = OpMode8872.DEFAULT_CONSTANTS;
 
     public static double DISTANCE = 80; // in
 

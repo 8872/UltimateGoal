@@ -5,7 +5,7 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.util.Angle;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import org.firstinspires.ftc.teamcode.DriveConstants;
+import org.firstinspires.ftc.teamcode.OpMode8872;
 
 /**
  * Opmode designed to assist the user in tuning the `StandardTrackingWheelLocalizer`'s
@@ -65,7 +65,7 @@ public class TrackingWheelLateralDistanceTuner extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap, DriveConstants.DEFAULT);
+        SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap, OpMode8872.DEFAULT_CONSTANTS);
 
         telemetry.addLine("Prior to beginning the routine, please read the directions "
             + "located in the comments of the opmode file.");
@@ -111,7 +111,7 @@ public class TrackingWheelLateralDistanceTuner extends LinearOpMode {
         telemetry.clearAll();
         telemetry.addLine("Localizer's total heading: " + Math.toDegrees(headingAccumulator) + "°");
         telemetry.addLine("Effective LATERAL_DISTANCE: " +
-            (headingAccumulator / (NUM_TURNS * Math.PI * 2)) * DriveConstants.DEFAULT.LATERAL_DISTANCE);
+            (headingAccumulator / (NUM_TURNS * Math.PI * 2)) * OpMode8872.DEFAULT_CONSTANTS.LATERAL_DISTANCE);
 
         telemetry.update();
 

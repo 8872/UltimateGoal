@@ -10,37 +10,27 @@ import org.firstinspires.ftc.teamcode.ultimategoal.rrunner.UltimateGoalDriveCons
 @Config
 public abstract class UltimateGoalAutonomous extends UltimateGoalOpMode {
 
-    private final SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap, UltimateGoalDriveConstants.INSTANCE);
+    {this.msStuckDetectStart = Integer.MAX_VALUE;} // prevent it from getting stuck in start()
 
-    private final Trajectory shootingLocation = drive.trajectoryBuilder(new Pose2d(-58, 17 * yMult(), 0))
-        .lineTo(new Vector2d(-22, 17 * yMult()))
-        .splineToConstantHeading(new Vector2d(shooterEndLocX, shootingEndLocY * yMult()), 90 * yMult())
-        .build();
+    private SampleMecanumDrive drive;
 
-    private final Trajectory squareA = drive.trajectoryBuilder(shootingLocation.end())
-        .lineTo(new Vector2d(4, 60 * yMult()))
-        .build();
-    private final Trajectory squareB = drive.trajectoryBuilder(shootingLocation.end())
-        .lineTo(new Vector2d(24, 35 * yMult()))
-        .build();
-    private final Trajectory squareC = drive.trajectoryBuilder(shootingLocation.end())
-        .lineTo(new Vector2d(50, 60 * yMult()))
-        .build();
-// x value has to be between 15 and 6 to be parked properly
+    private Trajectory shootingLocation;
 
-    private final Trajectory parkB = drive.trajectoryBuilder(squareB.end())
-        .lineTo(new Vector2d(15, 35 * yMult()))
-        .build();
-    private final Trajectory parkC = drive.trajectoryBuilder(squareC.end())
-        .lineTo(new Vector2d(15, 35 * yMult()))
-        .build();
+    private Trajectory squareA;
+    private Trajectory squareB;
+    private Trajectory squareC;
+
+
+    private Trajectory parkB;
+    private Trajectory parkC;
 
 
     public static int turnAfterShoot = -2;
     public static int shootingEndLocY = 24;
     public static int shooterEndLocX = 8;
-    public static int rpm1 = 3500;
+    public static int rpm1 = 2800;
     public static int shootWait = 6000;
+    public static int timeBeforeShot = 10000;
 
     /**
      * @return the integer to multiply all y position values by
@@ -50,7 +40,29 @@ public abstract class UltimateGoalAutonomous extends UltimateGoalOpMode {
     @Override
     protected void initHardwareDevices() {
         super.initHardwareDevices();
+        drive = new SampleMecanumDrive(hardwareMap, UltimateGoalDriveConstants.INSTANCE);
+        shootingLocation = drive.trajectoryBuilder(new Pose2d(-58, 17 * yMult(), 0))
+            .lineTo(new Vector2d(-22, 17 * yMult()))
+            .splineToConstantHeading(new Vector2d(shooterEndLocX, shootingEndLocY * yMult()), 90 * yMult())
+            .build();
 
+        squareA = drive.trajectoryBuilder(shootingLocation.end())
+            .lineTo(new Vector2d(4, 60 * yMult()))
+            .build();
+        squareB = drive.trajectoryBuilder(shootingLocation.end())
+            .lineTo(new Vector2d(24, 35 * yMult()))
+            .build();
+        squareC = drive.trajectoryBuilder(shootingLocation.end())
+            .lineTo(new Vector2d(50, 60 * yMult()))
+            .build();
+        // x value has to be between 15 and 6 to be parked properly
+
+        parkB = drive.trajectoryBuilder(squareB.end())
+            .lineTo(new Vector2d(15, 35 * yMult()))
+            .build();
+        parkC = drive.trajectoryBuilder(squareC.end())
+            .lineTo(new Vector2d(15, 35 * yMult()))
+            .build();
 
         // drive.setPoseEstimate(new Pose2d(0, 0));
 
@@ -68,7 +80,9 @@ public abstract class UltimateGoalAutonomous extends UltimateGoalOpMode {
         shooterFront.setVelocity(rpm1 * 28.0 / 60);
 
         boxServo.setPosition(0.75);
+        sleep(timeBeforeShot);
         drive.followTrajectory(shootingLocation);
+        drive.turn(Math.toRadians(turnAfterShoot));
         telemetry.addLine().addData("Heading: ", drive.getRawExternalHeading());
         telemetry.update();
         drive.turn(Math.toRadians(turnAfterShoot));
