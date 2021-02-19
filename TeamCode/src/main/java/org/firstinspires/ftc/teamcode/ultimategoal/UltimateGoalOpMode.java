@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.ultimategoal;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -7,8 +8,13 @@ import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.OpMode8872;
 
+@Config
 abstract class UltimateGoalOpMode extends OpMode8872 {
 
+    protected static double boxInitialPosition = 0.35;
+    protected static double boxLauncherPosition = 0.75;
+    protected static final int wobbleGoalPick = 0;
+    protected static final int wobbleGoalDrop = -110;
     protected final int wobbleGoalMotorGearRatio = 2;
     protected final int wobbleGoalMotorTicksPerDegree = (5264 / 360) * wobbleGoalMotorGearRatio;
 
@@ -46,7 +52,7 @@ abstract class UltimateGoalOpMode extends OpMode8872 {
 
         boxServo.setPosition(0.35);
         ringServo.setPosition(0);
-
+        wobbleServo.setPosition(Servo.MIN_POSITION);
         // Don't put a random number in there will break whole mechanism
 //        wobbleGoalMotor.setTargetPosition();
 //        wobbleGoalMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);

@@ -7,12 +7,21 @@ import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import org.firstinspires.ftc.teamcode.rrunner.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.ultimategoal.rrunner.UltimateGoalDriveConstants;
 
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+
 @Config
 public abstract class UltimateGoalAutonomous extends UltimateGoalOpMode {
 
     {this.msStuckDetectStart = Integer.MAX_VALUE;} // prevent it from getting stuck in start()
 
     private SampleMecanumDrive drive;
+
+    Pose2d startingPosition = new Pose2d(-58, 17 * yMult(), 0);
+
+    ExecutorService pool = Executors.newSingleThreadExecutor();
+    @SuppressWarnings({"rawtypes"}) Future opModeFuture;
 
     private Trajectory shootingLocation;
 
@@ -25,12 +34,10 @@ public abstract class UltimateGoalAutonomous extends UltimateGoalOpMode {
     private Trajectory parkC;
 
 
-    public static int turnAfterShoot = -2;
     public static int shootingEndLocY = 24;
     public static int shooterEndLocX = 8;
-    public static int rpm1 = 2800;
-    public static int shootWait = 6000;
-    public static int timeBeforeShot = 10000;
+    public static int rpm1 = 2750;
+    public static int shootWait = 500;
 
     /**
      * @return the integer to multiply all y position values by
@@ -68,35 +75,50 @@ public abstract class UltimateGoalAutonomous extends UltimateGoalOpMode {
 
         // drive.followTrajectory(drive.trajectoryBuilder(new Pose2d(0, 0)).lineTo(new Vector2d(-58, 17 * y)).build());
 
-        drive.setPoseEstimate(new Pose2d(-58, 17 * yMult(), 0));
+        drive.setPoseEstimate(startingPosition);
         sleep(1000);
     }
 
     @Override
     public void start() {
         super.start();
-        // TODO: speed up shooting wheels
+
+        opModeFuture = pool.submit(() -> {
+            try {
+                runOpMode();
+                requestOpModeStop();
+            } catch (InterruptedException ignored) {
+            }
+        });
+    }
+
+
+    private void runOpMode() throws InterruptedException {
+
         shooterBack.setVelocity(rpm1 * 28.0 / 60); //convert to encoder ticks
         shooterFront.setVelocity(rpm1 * 28.0 / 60);
 
-        boxServo.setPosition(0.75);
-        sleep(timeBeforeShot);
-        drive.followTrajectory(shootingLocation);
-        drive.turn(Math.toRadians(turnAfterShoot));
-        telemetry.addLine().addData("Heading: ", drive.getRawExternalHeading());
-        telemetry.update();
-        drive.turn(Math.toRadians(turnAfterShoot));
-        sleep(100);// TODO: shoot rings
+        boxServo.setPosition(boxLauncherPosition);
 
-        for (int i = 0; i < 3; i++) {
+        drive.followTrajectory(shootingLocation);
+        drive.turn(Math.toRadians(2));
+        telemetry.addLine().addData("Heading:   ", drive.getRawExternalHeading());
+        telemetry.update();
+        sleep(700);// TODO: shoot rings
+
+        for (int i = 0; i < 3 && !isStopRequested(); i++) {
             ringServo.setPosition(1);
             sleep(300);
             ringServo.setPosition(0);
             sleep(shootWait);
         }
+        drive.turn(Math.toRadians(-2)); // undo turn
 
         shooterFront.setVelocity(0);
         shooterBack.setVelocity(0);
+
+        drive.followTrajectory(drive.trajectoryBuilder(drive.getPoseEstimate()).lineTo(startingPosition.vec()).build());
+
 
         int ringsDetected = 2;
 
@@ -116,9 +138,19 @@ public abstract class UltimateGoalAutonomous extends UltimateGoalOpMode {
         telemetry.addLine().addData("Heading ", drive.getRawExternalHeading());
         telemetry.update();
         sleep(3000);
-        requestOpModeStop();
     }
 
     @Override
-    public void loop() { }
+    public void loop() {}
+
+    @Override
+    public void stop() {
+        super.stop();
+        if (opModeFuture != null) {
+            opModeFuture.cancel(true);
+            opModeFuture = null;
+        }
+//        Thread.currentThread().interrupt();
+    }
+
 }

@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.util.RobotLog;
 import org.firstinspires.ftc.teamcode.ultimategoal.rrunner.UltimateGoalDriveConstants;
 
 import java.math.BigDecimal;
@@ -25,6 +26,10 @@ public abstract class OpMode8872 extends OpMode {
 
     @Override
     public final void init() {
+        if (hardwareMap.voltageSensor.get("Control Hub").getVoltage() < 12.3) {
+            RobotLog.addGlobalWarningMessage("Battery voltage is very low. Motors may not run at full speed");
+        }
+
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
         if (calibrateIMU) {

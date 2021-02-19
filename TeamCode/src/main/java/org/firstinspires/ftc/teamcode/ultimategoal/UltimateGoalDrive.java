@@ -12,14 +12,9 @@ import org.firstinspires.ftc.teamcode.util.Timer;
 public class UltimateGoalDrive extends UltimateGoalOpMode {
 
 
-    public static double boxInitialPosition = 0.35;
-    public static double boxLauncherPosition = 0.76;
 
     private static final double launcherRPMSpeed = 3500;
     private static final double intakePower = 0.5;
-
-    private static final int wobbleGoalPick = 0;
-    private static final int wobbleGoalDrop = -110;
 
     private final Timer boxServoTimer = new Timer(1000); // try 300
     private final Timer kickerServoTimer = new Timer(1000); // try 200
