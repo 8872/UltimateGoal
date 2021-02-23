@@ -14,9 +14,9 @@ abstract class UltimateGoalOpMode extends OpMode8872 {
     protected static double boxInitialPosition = 0.35;
     protected static double boxLauncherPosition = 0.75;
     protected static final int wobbleGoalPick = 0;
-    protected static final int wobbleGoalDrop = -110;
-    protected final int wobbleGoalMotorGearRatio = 2;
-    protected final int wobbleGoalMotorTicksPerDegree = (5264 / 360) * wobbleGoalMotorGearRatio;
+    protected static final int wobbleGoalDrop = -155;
+    protected static final int wobbleGoalMotorGearRatio = 2;
+    protected static final int wobbleGoalMotorTicksPerDegree = (5264 / 360) * wobbleGoalMotorGearRatio;
 
     protected DcMotorEx shooterFront, shooterBack, wobbleGoalMotor;
     protected DcMotor intake;

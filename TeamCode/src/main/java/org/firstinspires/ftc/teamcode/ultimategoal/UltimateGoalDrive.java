@@ -12,8 +12,7 @@ import org.firstinspires.ftc.teamcode.util.Timer;
 public class UltimateGoalDrive extends UltimateGoalOpMode {
 
 
-
-    private static final double launcherRPMSpeed = 3500;
+    private static final double launcherRPMSpeed = 2450;
     private static final double intakePower = 0.5;
 
     private final Timer boxServoTimer = new Timer(1000); // try 300
@@ -62,12 +61,11 @@ public class UltimateGoalDrive extends UltimateGoalOpMode {
 
         if (!controlMode) {
             wobbleGoalMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-            wobbleGoalMotor.setPower(gamepad2.left_stick_y / 2);
+            wobbleGoalMotor.setPower(-gamepad2.left_stick_y / 2);
         }
 
         if (wobbleGoalDropTimer.isFinished()) {
             wobbleGoalTimeSpacing(wobbleGoalDrop, 20);
-
             wobbleGoalDropTimer.reset();
         }
         if (wobbleGoalPickUpTimer.isFinished()) {
@@ -87,12 +85,12 @@ public class UltimateGoalDrive extends UltimateGoalOpMode {
         }
         lastDPadUp = gamepad1.dpad_up;
 
-        if (!wobbleGoalMotor.isBusy()) {
+        if (!wobbleGoalMotor.isBusy() && controlMode) {
             wobbleGoalMotor.setVelocity(0);
             controlMode = false;
         }
         int currentPos = wobbleGoalMotor.getCurrentPosition() / wobbleGoalMotorTicksPerDegree;
-        if (currentPos > Math.max(wobbleGoalPick, wobbleGoalDrop) + 12 || currentPos < Math.min(wobbleGoalPick, wobbleGoalDrop) - 12) {
+        if (currentPos > Math.max(0, wobbleGoalDrop) + 12 || currentPos < Math.min(0, wobbleGoalDrop) - 12) {
             wobbleGoalMotor.setVelocity(0);
         }
 
