@@ -162,9 +162,5 @@ public class UltimateGoalDrive extends UltimateGoalOpMode {
         super.composeTelemetry();
         telemetry.addLine().addData("Accelerating", () -> acceleratePower != 0);
         telemetry.addLine().addData("Slow Mode", () -> slowMode);
-        telemetry.addLine().addData("Launcher Front Velocity", () -> shooterFront.getVelocity(AngleUnit.DEGREES));
-        telemetry.addLine().addData("Launcher Back Velocity", () -> shooterBack.getVelocity(AngleUnit.DEGREES));
-        telemetry.addLine().addData("Wobble Goal Position", () -> wobbleGoalMotor.isBusy());
-        telemetry.addLine().addData("TargetPositionTolerance", () -> wobbleGoalMotor.getTargetPositionTolerance());
     }
 }

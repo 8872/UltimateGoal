@@ -11,8 +11,6 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
-import org.firstinspires.ftc.teamcode.rrunner.SampleMecanumDrive;
-import org.firstinspires.ftc.teamcode.ultimategoal.rrunner.UltimateGoalDriveConstants;
 
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -34,7 +32,7 @@ public abstract class UltimateGoalAutonomous extends UltimateGoalOpMode {
 
     private final Pose2d startingPosition = new Pose2d(-58, 32 * yMult(), 0);
 
-    private SampleMecanumDrive drive;
+
     private TFObjectDetector tfod;
 
     @SuppressWarnings({"rawtypes"}) Future opModeFuture;
@@ -60,9 +58,7 @@ public abstract class UltimateGoalAutonomous extends UltimateGoalOpMode {
     protected void initHardwareDevices() {
         super.initHardwareDevices();
 
-        initializeTfod();
-
-        drive = new SampleMecanumDrive(hardwareMap, UltimateGoalDriveConstants.INSTANCE);
+        drive.setPoseEstimate(startingPosition);
 
         shootingLocation = drive.trajectoryBuilder(startingPosition)
             .splineToConstantHeading(new Vector2d(-22, 17 * yMult()), 0)
@@ -90,9 +86,6 @@ public abstract class UltimateGoalAutonomous extends UltimateGoalOpMode {
         parkC = drive.trajectoryBuilder(squareC.end())
             .lineTo(new Vector2d(15, 35 * yMult()))
             .build();
-
-
-        drive.setPoseEstimate(startingPosition);
     }
 
     @Override

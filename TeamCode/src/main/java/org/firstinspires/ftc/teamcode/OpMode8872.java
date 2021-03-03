@@ -4,6 +4,7 @@ import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.RobotLog;
+import org.firstinspires.ftc.teamcode.rrunner.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.ultimategoal.rrunner.UltimateGoalDriveConstants;
 
 import java.math.BigDecimal;
@@ -13,6 +14,7 @@ public abstract class OpMode8872 extends OpMode {
 
 
     public static final DriveConstants DEFAULT_CONSTANTS = UltimateGoalDriveConstants.INSTANCE;
+    protected SampleMecanumDrive drive;
     /**
      * Calibration is not necessary, unless full accuracy of IMU is immediately needed
      * <p>
@@ -65,6 +67,8 @@ public abstract class OpMode8872 extends OpMode {
 
         brake();
 
+        drive = new SampleMecanumDrive(hardwareMap, UltimateGoalDriveConstants.INSTANCE);
+
         initHardwareDevices();
 
         composeTelemetry();
@@ -94,35 +98,23 @@ public abstract class OpMode8872 extends OpMode {
     }
 
     protected void mechanumDrive(boolean slowMode, boolean xDisable, boolean yDisable) {
-        double r;
-        double robotAngle;
-        if (xDisable) {
-            r = Math.hypot(-gamepad1.left_stick_y, 0);
-            robotAngle = Math.atan2(-gamepad1.left_stick_y, 0) - Math.PI / 4;
-        } else if (yDisable) {
-            r = Math.hypot(0, gamepad1.left_stick_x);
-            robotAngle = Math.atan2(0, gamepad1.left_stick_x) - Math.PI / 4;
-        } else {
-            r = Math.hypot(-gamepad1.left_stick_y, gamepad1.left_stick_x);
-            robotAngle = Math.atan2(-gamepad1.left_stick_y, gamepad1.left_stick_x) - Math.PI / 4;
-        }
-        double rightX = gamepad1.right_stick_x;
-        double v1 = (r * Math.cos(robotAngle) + rightX) * Math.sqrt(2);
-        double v2 = (r * Math.sin(robotAngle) - rightX) * Math.sqrt(2);
-        double v3 = (r * Math.sin(robotAngle) + rightX) * Math.sqrt(2);
-        double v4 = (r * Math.cos(robotAngle) - rightX) * Math.sqrt(2);
+        double vertical = -gamepad1.left_stick_x;
+        double horizontal = -gamepad1.left_stick_y;
+        double angle = -gamepad1.right_stick_x;
 
-        if (slowMode) {
-            leftFront.setPower(v1 / 2);
-            rightFront.setPower(v2 / 2);
-            leftRear.setPower(v3 / 2);
-            rightRear.setPower(v4 / 2);
-        } else {
-            leftFront.setPower(v1);
-            rightFront.setPower(v2);
-            leftRear.setPower(v3);
-            rightRear.setPower(v4);
+        if (xDisable) {
+            vertical = 0;
         }
+        if (yDisable) {
+            horizontal = 0;
+        }
+        if (slowMode) {
+            vertical = vertical / 2;
+            horizontal = horizontal / 2;
+            angle = angle / 2;
+        }
+
+        drive.setWeightedDrivePower(horizontal, vertical, angle); // in roadrunner x and y are reversed
     }
 
     protected double accelerate(double acceleratePower) {

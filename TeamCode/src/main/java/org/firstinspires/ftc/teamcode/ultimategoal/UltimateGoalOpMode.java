@@ -53,9 +53,6 @@ abstract class UltimateGoalOpMode extends OpMode8872 {
         boxServo.setPosition(0.35);
         ringServo.setPosition(0);
         wobbleServo.setPosition(Servo.MIN_POSITION);
-        // Don't put a random number in there will break whole mechanism
-//        wobbleGoalMotor.setTargetPosition();
-//        wobbleGoalMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
 
     @Override
@@ -66,8 +63,7 @@ abstract class UltimateGoalOpMode extends OpMode8872 {
         telemetry.addLine().addData("Launcher Back Velocity", () -> shooterBack.getVelocity(AngleUnit.DEGREES));
         telemetry.addLine().addData("Box Servo", () -> boxServo.getPosition());
         telemetry.addLine().addData("Ring Servo", () -> ringServo.getPosition());
-        telemetry.addLine().addData("Wobble Goal Mechanism", () -> wobbleGoalMotor.getCurrentPosition() / wobbleGoalMotorTicksPerDegree);
-
+        telemetry.addLine().addData("Wobble Goal Position", () -> wobbleGoalMotor.getCurrentPosition() / wobbleGoalMotorTicksPerDegree);
     }
 
 }
