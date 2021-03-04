@@ -11,8 +11,8 @@ import org.firstinspires.ftc.teamcode.OpMode8872;
 @Config
 abstract class UltimateGoalOpMode extends OpMode8872 {
 
-    protected static double boxInitialPosition = 0.35;
-    protected static double boxLauncherPosition = 0.75;
+    public static double boxInitialPosition = 0.35;
+    public static double boxLauncherPosition = 0.73;
     protected static final int wobbleGoalPick = 0;
     protected static final int wobbleGoalDrop = -155;
     protected static final int wobbleGoalMotorGearRatio = 2;
@@ -47,7 +47,8 @@ abstract class UltimateGoalOpMode extends OpMode8872 {
         shooterBack.setDirection(DcMotorSimple.Direction.REVERSE);
         intake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         intake.setDirection(DcMotorSimple.Direction.REVERSE);
-        wobbleGoalMotor.setTargetPositionTolerance(110);
+        // original target tolerance: 110
+        wobbleGoalMotor.setTargetPositionTolerance(160);
         boxServo.setDirection(Servo.Direction.REVERSE);
 
         boxServo.setPosition(0.35);

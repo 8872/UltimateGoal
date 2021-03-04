@@ -26,7 +26,7 @@ public abstract class UltimateGoalAutonomous extends UltimateGoalOpMode {
     private static final ExecutorService pool = Executors.newSingleThreadExecutor();
 
     public static int shootingEndLocY = 24;
-    public static int shooterEndLocX = 8;
+    public static int shooterEndLocX = 5;
     public static int rpm1 = 2750;
     public static int shootWait = 500;
 
@@ -66,13 +66,13 @@ public abstract class UltimateGoalAutonomous extends UltimateGoalOpMode {
             .build();
 
         squareA = drive.trajectoryBuilder(shootingLocation.end())
-            .lineTo(new Vector2d(4, 55 * yMult()))
+                .lineTo(new Vector2d(4, 60 * yMult()))
             .build();
         squareB = drive.trajectoryBuilder(shootingLocation.end())
             .lineTo(new Vector2d(24, 35 * yMult()))
             .build();
         squareC = drive.trajectoryBuilder(shootingLocation.end())
-            .lineTo(new Vector2d(50, 55 * yMult()))
+                .lineTo(new Vector2d(54, 60 * yMult()))
             .build();
         // x value has to be between 15 and 6 to be parked properly
 
@@ -128,44 +128,49 @@ public abstract class UltimateGoalAutonomous extends UltimateGoalOpMode {
         boxServo.setPosition(boxLauncherPosition);
 
         drive.followTrajectory(shootingLocation);
-        drive.turn(Math.toRadians(5));
+        drive.turn(Math.toRadians(5)); //shoot heading was 10
         telemetry.addLine().addData("Heading:   ", drive.getRawExternalHeading());
         telemetry.update();
-        sleep(700);// TODO: shoot rings
+        sleep(700);
 
         for (int i = 0; i < 3 && !isStopRequested(); i++) {
             ringServo.setPosition(1);
-            sleep(300);
+            sleep(200);
             ringServo.setPosition(0);
             sleep(shootWait);
         }
-        drive.turn(Math.toRadians(-5)); // undo turn
+        drive.turn(Math.toRadians(-5)); // undo turn was -10
 
         shooterFront.setVelocity(0);
         shooterBack.setVelocity(0);
 
+        Trajectory square;
+        Trajectory park;
         switch (ringsDetected) {
             case ZERO:
-                drive.followTrajectory(squareA);
-//                dropWobbleGoal();
-                sleep(1000); // drop wobble goal
-                drive.followTrajectory(parkA);
+                square = squareA;
+                park = parkA;
                 break;
             case ONE:
-                drive.followTrajectory(squareB);
-//                dropWobbleGoal();
-                sleep(1000); // drop wobble goal
-                drive.followTrajectory(parkB);
+                square = squareB;
+                park = parkB;
                 break;
             case FOUR:
-                drive.followTrajectory(squareC);
-//                dropWobbleGoal();
-                sleep(1000); // drop wobble goal
-                drive.followTrajectory(parkC);
+                square = squareC;
+                park = parkC;
                 break;
+            default:
+                throw new IllegalStateException("Rings Detected");
         }
-//        resetWobbleGoal();
 
+        drive.followTrajectory(square);
+        dropWobbleGoal();
+        sleep(1000); // drop wobble goal
+        resetWobbleGoal();
+        sleep(1000);
+        drive.followTrajectory(park);
+
+        sleep(2000);
 //      drive.followTrajectory(drive.trajectoryBuilder(drive.getPoseEstimate()).lineTo(startingPosition.vec()).build()); // return to starting position
     }
 

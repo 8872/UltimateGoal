@@ -4,20 +4,24 @@ import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.util.Timer;
 
 @Config
 @TeleOp
 public class UltimateGoalDrive extends UltimateGoalOpMode {
 
-
-    private static final double launcherRPMSpeed = 2450;
+    // High Goal RPM: 2750
+    // Mid Goal RPM: 1800
+    public static double launcherRPMSpeed = 1800;
+    public static double launcherRPMSpeed2 = 2200;
     private static final double intakePower = 0.5;
 
-    private final Timer boxServoTimer = new Timer(1000); // try 300
-    private final Timer kickerServoTimer = new Timer(1000); // try 200
-    private final Timer kickerServoTimer2 = new Timer(1000); // try 400
+    public static int boxServoTime = 1000;
+    public static int kickerServoTime = 750;
+    public static int kickerServoTime2 = 200;
+    private final Timer boxServoTimer = new Timer(boxServoTime); // try 300
+    private final Timer kickerServoTimer = new Timer(kickerServoTime); // try 200
+    private final Timer kickerServoTimer2 = new Timer(kickerServoTime2); // try 400
     private final Timer wobbleGoalPickUpTimer = new Timer(700);
     private final Timer wobbleGoalDropTimer = new Timer(1500);
 
@@ -27,22 +31,12 @@ public class UltimateGoalDrive extends UltimateGoalOpMode {
     private ShooterState shooterState = ShooterState.IDLE;
 
     private boolean slowMode, controlMode;
-    private boolean lastAState, lastBumperState, leftTriggerState, lastDPadDown, lastDPadUp;
-    private boolean xDisable, yDisable;
+    private boolean lastAState, lastBumperState, lastDPadDown, lastDPadUp;
+    private boolean shooterEnabled = false;
     private double acceleratePower = 0;
 
     @Override
     public void loop() {
-        if ((gamepad1.left_trigger > 0) && !leftTriggerState && !xDisable && !yDisable) {
-            xDisable = true;
-        } else if ((gamepad1.left_trigger > 0) && !leftTriggerState && xDisable && !yDisable) {
-            yDisable = true;
-            xDisable = false;
-        } else if ((gamepad1.left_trigger > 0) && !leftTriggerState && !xDisable && yDisable) {
-            xDisable = false;
-            yDisable = false;
-        }
-        leftTriggerState = (gamepad1.left_trigger > 0);
 
 
         if (gamepad1.y) {
@@ -51,7 +45,7 @@ public class UltimateGoalDrive extends UltimateGoalOpMode {
         if (gamepad1.x || acceleratePower != 0) {
             acceleratePower = accelerate(acceleratePower);
         } else {
-            mechanumDrive(slowMode, xDisable, yDisable);
+            mechanumDrive(slowMode, false, false);
         }
 
         if (gamepad1.a && !lastAState) {
@@ -103,17 +97,27 @@ public class UltimateGoalDrive extends UltimateGoalOpMode {
         }
         lastBumperState = gamepad1.left_bumper || gamepad1.right_bumper;
 
+        if ((gamepad1.left_trigger != 0 && gamepad1.right_trigger == 0) || (gamepad1.left_trigger == 0 && gamepad1.right_trigger != 0)) {
+            shooterEnabled = true;
+        } else {
+            shooterEnabled = false;
+        }
 
-        if (gamepad1.right_trigger == 0 && shooterState != ShooterState.IDLE) {
+        if (!shooterEnabled && shooterState != ShooterState.IDLE) {
             shooterState = ShooterState.IDLE;
             resetLauncher();
         }
         switch (shooterState) {
             case IDLE:
-                if (gamepad1.right_trigger != 0) {
+                if (shooterEnabled) {
                     telemetry.addData("reset", false);
-                    shooterFront.setVelocity(launcherRPMSpeed * 6, AngleUnit.DEGREES);
-                    shooterBack.setVelocity(launcherRPMSpeed * 6, AngleUnit.DEGREES);
+                    if (gamepad1.right_trigger != 0) {
+                        shooterFront.setVelocity(launcherRPMSpeed * 28.0 / 60);
+                        shooterBack.setVelocity(launcherRPMSpeed * 28.0 / 60);
+                    } else if (gamepad1.left_trigger != 0) {
+                        shooterFront.setVelocity(launcherRPMSpeed2 * 28.0 / 60);
+                        shooterBack.setVelocity(launcherRPMSpeed2 * 28.0 / 60);
+                    }
                     shooterState = ShooterState.BOX;
                     boxServo.setPosition(boxLauncherPosition);
                     boxServoTimer.start();
