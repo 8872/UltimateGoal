@@ -103,6 +103,12 @@ public class UltimateGoalDrive extends UltimateGoalOpMode {
             shooterEnabled = false;
         }
 
+        if (gamepad1.dpad_left) {
+//            drive.followTrajectoryAsync(drive.trajectoryBuilder(drive.getPoseEstimate())
+//                .lineTo(new Vector2d(UltimateGoalAutonomous.shooterEndLocX, -UltimateGoalAutonomous.shootingEndLocY)).build());
+            drive.turnAsync(0);
+        }
+
         if (!shooterEnabled && shooterState != ShooterState.IDLE) {
             shooterState = ShooterState.IDLE;
             resetLauncher();
