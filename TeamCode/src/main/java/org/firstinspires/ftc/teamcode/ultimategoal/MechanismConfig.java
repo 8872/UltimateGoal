@@ -1,10 +1,12 @@
 package org.firstinspires.ftc.teamcode.ultimategoal;
 
 import com.acmerobotics.dashboard.config.Config;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 @TeleOp
 @Config
+@Disabled
 public class MechanismConfig extends UltimateGoalOpMode {
     private boolean leftTriggerState;
     private boolean lastDPadDown;

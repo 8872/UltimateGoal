@@ -67,4 +67,28 @@ abstract class UltimateGoalOpMode extends OpMode8872 {
         telemetry.addLine().addData("Wobble Goal Position", () -> wobbleGoalMotor.getCurrentPosition() / wobbleGoalMotorTicksPerDegree);
     }
 
+    protected void dropWobbleGoal() {
+        wobbleGoalMechanism(wobbleGoalDrop, Servo.MAX_POSITION);
+    }
+
+    protected void resetWobbleGoal() {
+        wobbleGoalMechanism(wobbleGoalPick, Servo.MIN_POSITION);
+    }
+
+    private void wobbleGoalMechanism(int motorTarget, double servoTarget) {
+        wobbleGoalMotor.setTargetPosition(motorTarget * wobbleGoalMotorTicksPerDegree);
+        wobbleGoalMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        wobbleGoalMotor.setVelocity(20 * wobbleGoalMotorTicksPerDegree);
+        while (wobbleGoalMotor.isBusy() && !isStopRequested()) {
+            Thread.yield();
+            sleep(100);
+        }
+        sleep(2000);
+        wobbleGoalMotor.setVelocity(0);
+
+        sleep(1000);
+        wobbleServo.setPosition(servoTarget);
+        sleep(1000);
+    }
+
 }

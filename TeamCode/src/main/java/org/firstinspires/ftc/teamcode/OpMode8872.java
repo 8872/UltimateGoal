@@ -90,7 +90,7 @@ public abstract class OpMode8872 extends OpMode {
         telemetry.addLine().addData("rightFront", () -> round(rightFront.getPower()));
         telemetry.addLine().addData("rightRear", () -> round(rightRear.getPower()));
         telemetry.addLine().addData("imu x", () -> imu.getPosition().x);
-        telemetry.addLine().addData("imu x", () -> imu.getPosition().y);
+        telemetry.addLine().addData("imu y", () -> imu.getPosition().y);
         telemetry.addLine().addData("Imu Heading", () -> imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle);
     }
 

@@ -1,11 +1,13 @@
 package org.firstinspires.ftc.teamcode.ultimategoal;
 
 import com.acmerobotics.dashboard.config.Config;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
 @TeleOp
 @Config
+@Disabled
 public class MotorPowerSetter extends UltimateGoalOpMode {
 
     //    private File rpm1Stored = AppUtil.getInstance().getSettingsFile("RPM1TestChassis.txt");
