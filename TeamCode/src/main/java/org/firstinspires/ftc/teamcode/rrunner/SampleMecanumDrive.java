@@ -1,9 +1,9 @@
 package org.firstinspires.ftc.teamcode.rrunner;
 
 import androidx.annotation.NonNull;
+import androidx.core.util.Predicate;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.canvas.Canvas;
-import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.control.PIDFController;
 import com.acmerobotics.roadrunner.drive.DriveSignal;
@@ -42,7 +42,7 @@ import java.util.List;
 /*
  * Simple mecanum drive hardware implementation for REV hardware.
  */
-@Config
+//@Config
 public class SampleMecanumDrive extends MecanumDrive {
 
     public static double VX_WEIGHT = 1;
@@ -78,6 +78,7 @@ public class SampleMecanumDrive extends MecanumDrive {
     private final List<DcMotorEx> motors;
     public BNO055IMU imu;
     private final VoltageSensor batteryVoltageSensor;
+    public volatile TelemetryPacket telemetry;
 
     private Pose2d lastPoseOnTurn;
 
@@ -146,6 +147,8 @@ public class SampleMecanumDrive extends MecanumDrive {
         // TODO: if desired, use setLocalizer() to change the localization method
         // for instance, setLocalizer(new ThreeTrackingWheelLocalizer(...));
         setLocalizer(constants.createLocalizer(hardwareMap));
+
+        telemetry = new TelemetryPacket();
     }
 
     public TrajectoryBuilder trajectoryBuilder(Pose2d startPose) {
@@ -217,18 +220,17 @@ public class SampleMecanumDrive extends MecanumDrive {
             poseHistory.removeFirst();
         }
 
-        TelemetryPacket packet = new TelemetryPacket();
-        Canvas fieldOverlay = packet.fieldOverlay();
+        Canvas fieldOverlay = telemetry.fieldOverlay();
 
-        packet.put("mode", mode);
+        telemetry.put("mode", mode);
 
-        packet.put("x", currentPose.getX());
-        packet.put("y", currentPose.getY());
-        packet.put("headingDegrees", Math.toDegrees(currentPose.getHeading()));
+        telemetry.put("x", currentPose.getX());
+        telemetry.put("y", currentPose.getY());
+        telemetry.put("headingDegrees", Math.toDegrees(currentPose.getHeading()));
 
-        packet.put("xError", lastError.getX());
-        packet.put("yError", lastError.getY());
-        packet.put("headingError", lastError.getHeading());
+        telemetry.put("xError", lastError.getX());
+        telemetry.put("yError", lastError.getY());
+        telemetry.put("headingError", lastError.getHeading());
 
         switch (mode) {
             case IDLE:
@@ -289,7 +291,8 @@ public class SampleMecanumDrive extends MecanumDrive {
         fieldOverlay.setStroke("#3F51B5");
         DashboardUtil.drawRobot(fieldOverlay, currentPose);
 
-        dashboard.sendTelemetryPacket(packet);
+        dashboard.sendTelemetryPacket(telemetry);
+        telemetry = new TelemetryPacket();
     }
 
     public void waitForIdle() {

@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
 @TeleOp
-@Config
+//@Config
 @Disabled
 public class MotorPowerSetter extends UltimateGoalOpMode {
 
@@ -92,13 +92,13 @@ public class MotorPowerSetter extends UltimateGoalOpMode {
     @Override
     protected void composeTelemetry() {
         super.composeTelemetry();
-        telemetry.addLine().addData("Testing Purposes", () -> name1 + rpm1);
-        telemetry.addLine().addData("TestingPurposes", () -> name2 + rpm2);
+        telemetry.addData("Testing Purposes", () -> name1 + rpm1);
+        telemetry.addData("TestingPurposes", () -> name2 + rpm2);
 
-        telemetry.addLine().addData(name1 + " (Using Angle)", () -> toRPM(shooterFront.getVelocity(AngleUnit.DEGREES)));
-        telemetry.addLine().addData(name2 + " (Using Angle)", () -> toRPM(shooterBack.getVelocity(AngleUnit.DEGREES)));
-        telemetry.addLine().addData(name1 + " (Using Ticks)", () -> shooterFront.getVelocity() * 60.0 / 28.0);
-        telemetry.addLine().addData(name2 + " (Using Ticks)", () -> shooterBack.getVelocity() * 60.0 / 28.0);
+        telemetry.addData(name1 + " (Using Angle)", () -> toRPM(shooterFront.getVelocity(AngleUnit.DEGREES)));
+        telemetry.addData(name2 + " (Using Angle)", () -> toRPM(shooterBack.getVelocity(AngleUnit.DEGREES)));
+        telemetry.addData(name1 + " (Using Ticks)", () -> shooterFront.getVelocity() * 60.0 / 28.0);
+        telemetry.addData(name2 + " (Using Ticks)", () -> shooterBack.getVelocity() * 60.0 / 28.0);
 
     }
 }

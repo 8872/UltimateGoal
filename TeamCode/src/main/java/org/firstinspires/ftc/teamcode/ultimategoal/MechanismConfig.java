@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 @TeleOp
-@Config
+//@Config
 @Disabled
 public class MechanismConfig extends UltimateGoalOpMode {
     private boolean leftTriggerState;

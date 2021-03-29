@@ -4,7 +4,7 @@ import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
-import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -17,75 +17,67 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
+import static org.firstinspires.ftc.teamcode.ultimategoal.UltimateGoalAutoConstants.*;
+
 @Config
-public abstract class UltimateGoalAutonomous extends UltimateGoalOpMode {
+@Autonomous
+public class UltimateGoalAutonomous extends UltimateGoalOpMode {
 
     {msStuckDetectInit = 10_000;}
 
     private static final String VUFORIA_KEY = "AY2fDeT/////AAABmSQo7FZp407MmUmu4W/djRxOWPSXLk/0nKrebNwBqKhKa7iBAhQth0OvoRSpG5xwPtWE90+JwjuAN4n63OCkZS4SrWnGZTtx6UR5g2fiJ/NEmte4NJjBNPA43DQiWvM9tT5960+i0Az6HO5jT/3Ert6ucsjj+eya6gdWaKzAlVknYJrgCeSpCWhpwvwiy1BVkuqsMRRC1MF77uaUtrt04HFzckOOJ4HMTUXLvCyN+EdmxuIqIzNEH3y4LSfoK+HDBaffqNYaRGlQHm3xDdimZ/Uw57NpO+96zwcPA8wvoiEjJ1x/oJ+8o7sO0EgULM8t73chtlzmM9YBkZUM1VMapzrUeunrULin9M8hj1r2SMPI";
     private static final ExecutorService pool = Executors.newSingleThreadExecutor();
 
-    public static int shootingEndLocY = 24;
-    public static int shooterEndLocX = 5;
-    public static int rpm1 = 2750;
-    public static int shootWait = 500;
-
-    private final Pose2d startingPosition = new Pose2d(-58, 32 * yMult(), 0);
-
 
     private TFObjectDetector tfod;
 
     @SuppressWarnings({"rawtypes"}) Future opModeFuture;
 
-    private Trajectory shootingLocation;
-    private Trajectory squareA;
-    private Trajectory squareB;
-    private Trajectory squareC;
-    private Trajectory parkA;
-    private Trajectory parkB;
-    private Trajectory parkC;
+    private Trajectory powerShotLocation, squareA, squareB, squareC, secondWobbleA, secondWobbleB, secondWobbleC,
+        squareA2, squareB2, squareC2, parkA, parkB, parkC;
 
     enum RingsDetected {ZERO, ONE, FOUR}
 
-    private RingsDetected ringsDetected;
-
-    /**
-     * @return the integer to multiply all y position values by
-     */
-    protected abstract int yMult();
+    private RingsDetected ringsDetected = RingsDetected.ZERO;
 
     @Override
     protected void initHardwareDevices() {
         super.initHardwareDevices();
 
-        drive.setPoseEstimate(startingPosition);
+        drive.setPoseEstimate(startingPosition());
 
-        shootingLocation = drive.trajectoryBuilder(startingPosition)
-            .splineToConstantHeading(new Vector2d(-22, 17 * yMult()), 0)
-            .splineToConstantHeading(new Vector2d(shooterEndLocX, shootingEndLocY * yMult()), 90 * yMult())
+
+        powerShotLocation = drive.trajectoryBuilder(startingPosition())
+            .splineToConstantHeading(powerShotPosition().vec(), 0)
             .build();
 
-        squareA = drive.trajectoryBuilder(shootingLocation.end())
-                .lineTo(new Vector2d(4, 60 * yMult()))
-            .build();
-        squareB = drive.trajectoryBuilder(shootingLocation.end())
-            .lineTo(new Vector2d(24, 35 * yMult()))
-            .build();
-        squareC = drive.trajectoryBuilder(shootingLocation.end())
-                .lineTo(new Vector2d(54, 60 * yMult()))
-            .build();
+        squareA = lineTo(powerShotLocation, squareAPosition().vec());
+        squareB = lineTo(powerShotLocation, squareBPosition().vec());
+        squareC = lineTo(powerShotLocation, squareCPosition().vec());
+
+        secondWobbleA = lineToLinearHeading(squareA, -27, -45, 180);
+//        secondWobbleA = drive.trajectoryBuilder(squareA.end())
+//                .lineToLinearHeading(new Pose2d(-27,-45,180))
+//                .forward(3)
+//                .build();
+        secondWobbleB = lineToLinearHeading(squareB, -37, -55, 180);
+        secondWobbleC = lineToLinearHeading(squareC, -37, -55, 180);
+
+        squareA2 = lineToLinearHeading(secondWobbleA, -2, -60, 0);
+        squareB2 = lineToLinearHeading(secondWobbleB, 24, -35, 0);
+        squareC2 = lineToLinearHeading(secondWobbleC, 54, -60, 0);
+
         // x value has to be between 15 and 6 to be parked properly
-
         parkA = drive.trajectoryBuilder(squareA.end())
-            .lineTo(new Vector2d(squareA.end().getX(), shootingEndLocY * yMult()))
-            .splineToConstantHeading(new Vector2d(15, 35 * yMult()), 0)
+            .back(10)
+            .splineToConstantHeading(new Vector2d(18, -35), 0)
             .build();
-        parkB = drive.trajectoryBuilder(squareB.end())
-            .lineTo(new Vector2d(15, 35 * yMult()))
-            .build();
-        parkC = drive.trajectoryBuilder(squareC.end())
-            .lineTo(new Vector2d(15, 35 * yMult()))
-            .build();
+//                drive.trajectoryBuilder(squareA.end())
+//            .lineTo(new Vector2d(squareA.end().getX(), -shootingEndLocY))
+        // .splineToConstantHeading(new Vector2d(15, -35), 0)
+        parkB = lineTo(squareB, 15, -35);
+        parkC = lineTo(squareC, 15, -35);
+        initializeTfod();
     }
 
     @Override
@@ -120,57 +112,55 @@ public abstract class UltimateGoalAutonomous extends UltimateGoalOpMode {
         });
     }
 
-
     private void runOpMode() throws InterruptedException {
-        shooterBack.setVelocity(rpm1 * 28.0 / 60); //convert to encoder ticks
-        shooterFront.setVelocity(rpm1 * 28.0 / 60);
-
+        setLauncherRPM(powerShotRPM);
         boxServo.setPosition(boxLauncherPosition);
 
-        drive.followTrajectory(shootingLocation);
-        drive.turn(Math.toRadians(5)); //shoot heading was 10
-        telemetry.addLine().addData("Heading:   ", drive.getRawExternalHeading());
-        telemetry.update();
-        sleep(700);
+        powerShotExecution();
 
-        for (int i = 0; i < 3 && !isStopRequested(); i++) {
-            ringServo.setPosition(1);
-            sleep(200);
-            ringServo.setPosition(0);
-            sleep(shootWait);
-        }
-        drive.turn(Math.toRadians(-5)); // undo turn was -10
-
-        shooterFront.setVelocity(0);
-        shooterBack.setVelocity(0);
+        setLauncherRPM(0);
 
         Trajectory square;
+        Trajectory square2;
+        Trajectory secondWobbleGoal;
         Trajectory park;
         switch (ringsDetected) {
             case ZERO:
                 square = squareA;
+                secondWobbleGoal = secondWobbleA;
+                square2 = squareA2;
                 park = parkA;
                 break;
             case ONE:
                 square = squareB;
+                secondWobbleGoal = secondWobbleB;
+                square2 = squareB2;
                 park = parkB;
                 break;
             case FOUR:
                 square = squareC;
+                secondWobbleGoal = secondWobbleC;
+                square2 = squareC2;
                 park = parkC;
                 break;
             default:
                 throw new IllegalStateException("Rings Detected");
         }
 
-        drive.followTrajectory(square);
+        drive.followTrajectoryAsync(square);
         dropWobbleGoal();
-        sleep(1000); // drop wobble goal
+        waitForRoadRunnerIdle();
+        drive.followTrajectory(secondWobbleGoal);
+        drive.followTrajectory(drive.trajectoryBuilder(secondWobbleGoal.end())
+            .forward(5)
+            .build());
         resetWobbleGoal();
-        sleep(1000);
+        drive.followTrajectoryAsync(square2);
+        whileSleep(300);
+        dropWobbleGoal();
+        waitForRoadRunnerIdle();
         drive.followTrajectory(park);
 
-        sleep(2000);
 //      drive.followTrajectory(drive.trajectoryBuilder(drive.getPoseEstimate()).lineTo(startingPosition.vec()).build()); // return to starting position
     }
 
@@ -191,37 +181,6 @@ public abstract class UltimateGoalAutonomous extends UltimateGoalOpMode {
         drive = null;
     }
 
-    private void dropWobbleGoal() {
-        wobbleGoalMotor.setTargetPosition(wobbleGoalDrop * wobbleGoalMotorTicksPerDegree);
-        wobbleGoalMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        wobbleGoalMotor.setVelocity(20 * wobbleGoalMotorTicksPerDegree);
-        while (wobbleGoalMotor.isBusy() && !isStopRequested()) {
-            System.out.println("drop wobble goal loop");
-            Thread.yield();
-            sleep(100);
-        }
-        sleep(2000);
-        wobbleGoalMotor.setVelocity(0);
-
-        sleep(1000);
-        wobbleServo.setPosition(Servo.MAX_POSITION);
-        sleep(500);
-    }
-
-    private void resetWobbleGoal() {
-        wobbleGoalMotor.setTargetPosition(wobbleGoalPick * wobbleGoalMotorTicksPerDegree);
-        wobbleGoalMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        wobbleGoalMotor.setVelocity(20 * wobbleGoalMotorTicksPerDegree);
-        while (wobbleGoalMotor.isBusy() && !isStopRequested()) {
-            Thread.yield();
-            sleep(100);
-        }
-        sleep(2000);
-
-        wobbleGoalMotor.setVelocity(0);
-        wobbleServo.setPosition(Servo.MIN_POSITION);
-        sleep(1000);
-    }
 
     private void initializeTfod() {
         VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters();
@@ -239,6 +198,50 @@ public abstract class UltimateGoalAutonomous extends UltimateGoalOpMode {
         tfod.loadModelFromFile("/sdcard/FIRST/vision/UltimateGoal.tflite", RingsDetected.FOUR.toString(), RingsDetected.ONE.toString());
         tfod.setZoom(1.2, 1.78);
         tfod.activate();
+    }
+
+    private void powerShotExecution() {
+        drive.followTrajectory(powerShotLocation);
+        sleep(waitTimePowerShots);
+        for (int i = 0; i <= 2; i++) {
+            if (i == 1) {
+                setLauncherRPM(powerShotRPM2);
+            } else if (i == 2) {
+                setLauncherRPM(powerShotRPM3);
+            }
+            drive.turn(powerShotAngles()[i]); // angle will be tuned later on
+            sleep(timeBetweenPowerShots); // time between each powershot
+            ringServo.setPosition(1);
+            sleep(200);
+            ringServo.setPosition(0);
+            sleep(shootWait);
+            telemetry.addData("Heading: ", drive.getRawExternalHeading());
+        }
+        drive.turn(-powerShotAngle3);
+    }
+
+
+    private Trajectory lineTo(Trajectory lastTrajectory, double x, double y) {
+        return lineTo(lastTrajectory, new Vector2d(x, y));
+    }
+
+    private Trajectory lineTo(Trajectory lastTrajectory, Vector2d vector2d) {
+        return drive.trajectoryBuilder(lastTrajectory.end())
+            .lineTo(vector2d)
+            .build();
+//  Don't delete this, testing for temporal markers
+//        return drive.trajectoryBuilder(lastTrajectory.end())
+//                .lineTo(vector2d)
+//                .addTemporalMarker(0,wobbleServo.setPosition(Servo.MIN_POSITION)
+//                .build();
+    }
+
+    private Trajectory lineToLinearHeading(Trajectory lastTrajectory, double x, double y, double headingDegrees) {
+        return lineToLinearHeading(lastTrajectory, new Pose2d(x, y, Math.toRadians(headingDegrees)));
+    }
+
+    private Trajectory lineToLinearHeading(Trajectory lastTrajectory, Pose2d pose2d) {
+        return drive.trajectoryBuilder(lastTrajectory.end()).lineToLinearHeading(pose2d).build();
     }
 
 }

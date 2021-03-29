@@ -1,9 +1,12 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.RobotLog;
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
@@ -12,12 +15,14 @@ import org.firstinspires.ftc.teamcode.ultimategoal.rrunner.UltimateGoalDriveCons
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.function.BooleanSupplier;
 
 public abstract class OpMode8872 extends OpMode {
 
 
     public static final DriveConstants DEFAULT_CONSTANTS = UltimateGoalDriveConstants.INSTANCE;
     protected SampleMecanumDrive drive;
+    protected Telemetry dashTelemetry;
     /**
      * Calibration is not necessary, unless full accuracy of IMU is immediately needed
      * <p>
@@ -34,6 +39,7 @@ public abstract class OpMode8872 extends OpMode {
         if (hardwareMap.voltageSensor.get("Control Hub").getVoltage() < 12.3) {
             RobotLog.addGlobalWarningMessage("Battery voltage is very low. Motors may not run at full speed");
         }
+        dashTelemetry = FtcDashboard.getInstance().getTelemetry();
 
         imu = hardwareMap.get(BNO055IMU.class, "imu");
         telemetry.addData("Mode", "Initializing imu...");
@@ -77,6 +83,11 @@ public abstract class OpMode8872 extends OpMode {
 
     protected abstract void initHardwareDevices();
 
+    protected void update() {
+        telemetry.update();
+        drive.update();
+    }
+
     protected void brake() {
         leftRear.setPower(0);
         rightRear.setPower(0);
@@ -85,13 +96,13 @@ public abstract class OpMode8872 extends OpMode {
     }
 
     protected void composeTelemetry() {
-        telemetry.addLine().addData("leftFront", () -> round(leftFront.getPower()));
-        telemetry.addLine().addData("leftRear", () -> round(leftRear.getPower()));
-        telemetry.addLine().addData("rightFront", () -> round(rightFront.getPower()));
-        telemetry.addLine().addData("rightRear", () -> round(rightRear.getPower()));
-        telemetry.addLine().addData("imu x", () -> imu.getPosition().x);
-        telemetry.addLine().addData("imu y", () -> imu.getPosition().y);
-        telemetry.addLine().addData("Imu Heading", () -> imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle);
+        telemetry.addData("leftFront", () -> round(leftFront.getPower()));
+        telemetry.addData("leftRear", () -> round(leftRear.getPower()));
+        telemetry.addData("rightFront", () -> round(rightFront.getPower()));
+        telemetry.addData("rightRear", () -> round(rightRear.getPower()));
+        telemetry.addData("imu x", () -> imu.getPosition().x);
+        telemetry.addData("imu y", () -> imu.getPosition().y);
+        telemetry.addData("Imu Heading", () -> imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle);
     }
 
     protected void mechanumDrive(boolean slowMode) {
@@ -122,20 +133,15 @@ public abstract class OpMode8872 extends OpMode {
     protected double accelerate(double acceleratePower) {
         if (gamepad1.x && acceleratePower < 0.5) {
             acceleratePower += 0.001;
-            rightFront.setPower(acceleratePower);
-            rightRear.setPower(acceleratePower);
-            leftRear.setPower(acceleratePower);
-            leftFront.setPower(acceleratePower);
+            drive.setMotorPowers(acceleratePower, acceleratePower, acceleratePower, acceleratePower);
         } else if (!gamepad1.x && acceleratePower > 0) {
             acceleratePower -= 0.001;
             if (acceleratePower <= 0) {
                 acceleratePower = 0;
             }
-            rightFront.setPower(acceleratePower); // maybe make these negative
-            rightRear.setPower(acceleratePower);
-            leftRear.setPower(acceleratePower);
-            leftFront.setPower(acceleratePower);
+            drive.setMotorPowers(acceleratePower, acceleratePower, acceleratePower, acceleratePower);
         }
+        drive.update();
 
         return acceleratePower;
     }
@@ -163,6 +169,25 @@ public abstract class OpMode8872 extends OpMode {
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         }
+    }
+
+    @SuppressWarnings("SameParameterValue")
+    protected void whileSleep(long millis) {
+        final long end = System.currentTimeMillis() + millis;
+        whileSleep(() -> System.currentTimeMillis() < end);
+    }
+
+    protected void whileSleep(BooleanSupplier supplier) {
+        while (!isStopRequested() && supplier.getAsBoolean()) {
+            Thread.yield();
+            update();
+            sleep(50);
+            Thread.yield();
+        }
+    }
+
+    protected void waitForRoadRunnerIdle() {
+        whileSleep(drive::isBusy);
     }
 
     protected final boolean isStopRequested() {

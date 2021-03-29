@@ -28,6 +28,6 @@ public class IntakePowerSetter extends UltimateGoalOpMode {
     @Override
     protected void composeTelemetry() {
         super.composeTelemetry();
-        telemetry.addLine().addData("Intake", () -> intake.getPower());
+        telemetry.addData("Intake", () -> intake.getPower());
     }
 }

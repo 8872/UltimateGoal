@@ -39,7 +39,7 @@ android {
     //noinspection GroovyDocCheck
     defaultConfig {
         applicationId 'com.qualcomm.ftcrobotcontroller'
-        minSdkVersion 23
+        minSdkVersion 25
         targetSdkVersion 28
         multiDexEnabled false
 

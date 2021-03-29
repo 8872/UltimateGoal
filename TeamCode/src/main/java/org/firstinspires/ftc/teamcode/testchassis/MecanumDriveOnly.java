@@ -36,8 +36,8 @@ public class MecanumDriveOnly extends OpMode8872 {
     @Override
     protected void composeTelemetry() {
         super.composeTelemetry();
-        telemetry.addLine().addData("Accelerating", () -> acceleratePower != 0.0);
-        telemetry.addLine().addData("Slow Mode", () -> slowMode);
+        telemetry.addData("Accelerating", () -> acceleratePower != 0.0);
+        telemetry.addData("Slow Mode", () -> slowMode);
     }
 
     @Override
