@@ -21,7 +21,7 @@ public abstract class OpMode8872 extends OpMode {
 
 
     public static final DriveConstants DEFAULT_CONSTANTS = UltimateGoalDriveConstants.INSTANCE;
-    protected SampleMecanumDrive drive;
+    protected static SampleMecanumDrive drive;
     protected Telemetry dashTelemetry;
     /**
      * Calibration is not necessary, unless full accuracy of IMU is immediately needed
@@ -36,9 +36,11 @@ public abstract class OpMode8872 extends OpMode {
 
     @Override
     public final void init() {
-        if (hardwareMap.voltageSensor.get("Control Hub").getVoltage() < 12.3) {
-            RobotLog.addGlobalWarningMessage("Battery voltage is very low. Motors may not run at full speed");
-        }
+        hardwareMap.voltageSensor.forEach(voltageSensor -> {
+            if (voltageSensor.getVoltage() < 12.7)
+                RobotLog.addGlobalWarningMessage("Battery voltage is very low. Motors may not run at full speed");
+        });
+
         dashTelemetry = FtcDashboard.getInstance().getTelemetry();
 
         imu = hardwareMap.get(BNO055IMU.class, "imu");
@@ -71,7 +73,7 @@ public abstract class OpMode8872 extends OpMode {
 
         brake();
 
-        drive = new SampleMecanumDrive(hardwareMap, UltimateGoalDriveConstants.INSTANCE);
+
 
         initHardwareDevices();
 

@@ -35,7 +35,7 @@ public class UltimateGoalDriveConstants extends DriveConstants {
      */
     private static final double TICKS_PER_REV = 537.6;
     // Actual max RPM: 349
-    private static final double MAX_RPM = 340;
+    private static double MAX_RPM = 415;
 
     /*
      * Set RUN_USING_ENCODER to true to enable built-in hub velocity control using drive encoders.

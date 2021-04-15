@@ -15,13 +15,14 @@ import java.util.function.Predicate;
 @Config
 abstract class UltimateGoalOpMode extends OpMode8872 {
 
-    public static double boxInitialPosition = 0.35;
-    public static double boxLauncherPosition = 0.75;
-    public static int wobbleGoalPick = -40;
-    public static int wobbleGoalDrop = -185;
+    public static double boxInitialPosition = 0.40;
+    public static double boxLauncherPosition = 0.73;
+    public static int wobbleGoalPick = 135;
+    public static int wobbleGoalDrop = 0;
     public static int wobbleGoalAngularSpeed = -220;
     protected static final int wobbleGoalMotorGearRatio = 2;
-    protected static int wobbleGoalMotorTicksPerDegree = (1425 / 360) * wobbleGoalMotorGearRatio;;
+    protected static int wobbleGoalMotorTicksPerDegree = (1425 / 360) * wobbleGoalMotorGearRatio;
+    public static double wobbleServoMax = 0.99;
 
 
     protected DcMotorEx shooterFront, shooterBack, wobbleGoalMotor;
@@ -60,14 +61,11 @@ abstract class UltimateGoalOpMode extends OpMode8872 {
         intake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         intake.setDirection(DcMotorSimple.Direction.REVERSE);
         // original target tolerance: 110
-        wobbleGoalMotor.setTargetPositionTolerance(30);
+//        wobbleGoalMotor.setTargetPositionTolerance(30);
         boxServo.setDirection(Servo.Direction.REVERSE);
         boxServo.setPosition(0.35);
         ringServo.setPosition(0);
         katanaServo.setPosition(0);
-        wobbleServo.setPosition(Servo.MIN_POSITION);
-
-
     }
 
     @Override
@@ -87,8 +85,6 @@ abstract class UltimateGoalOpMode extends OpMode8872 {
         telemetry.addData("Wobble Goal Position", () -> wobbleGoalMotor.getCurrentPosition() / wobbleGoalMotorTicksPerDegree);
         telemetry.addData("Wobble Motor Is Busy: ", wobbleGoalMotor::isBusy);
         telemetry.addData("WobbleGoalMotorMode: ", wobbleGoalMotor::getMode);
-//        telemetry.addData("Bottom Limit", wobbleGoalBottomLimit::isPressed);
-//        telemetry.addData("Top Limit", wobbleGoalTopLimit::isPressed);
     }
 
     protected void setLauncherRPM(int RPM){
@@ -96,15 +92,16 @@ abstract class UltimateGoalOpMode extends OpMode8872 {
         shooterFront.setVelocity(RPM * 28.0 / 60);
     }
     protected void dropWobbleGoal() {
-        wobbleGoalMechanism(wobbleGoalDrop);
-        wobbleServo.setPosition(Servo.MAX_POSITION);
+        wobbleGoalMechanism(-185);
+        wobbleServo.setPosition(wobbleServoMax);
         whileSleep(1000);
     }
 
-    protected void resetWobbleGoal() {
+    protected void resetWobbleGoal(int targetDegrees){
+        targetDegrees = Math.abs(targetDegrees);
         wobbleServo.setPosition(Servo.MIN_POSITION);
         whileSleep(1000);
-        wobbleGoalMechanism(-30);
+        wobbleGoalMechanism(-targetDegrees);
     }
 
     private void wobbleGoalMechanism(int motorTargetDegrees) {
