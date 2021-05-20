@@ -1,16 +1,10 @@
 package org.firstinspires.ftc.teamcode.ultimategoal;
 
-import android.util.Log;
 import com.acmerobotics.dashboard.config.Config;
-import com.qualcomm.hardware.rev.RevTouchSensor;
 import com.qualcomm.robotcore.hardware.*;
-import org.firstinspires.ftc.robotcontroller.external.samples.SensorDigitalTouch;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.teamcode.OpMode8872;
-
-import java.util.function.BooleanSupplier;
-import java.util.function.Predicate;
 
 @Config
 abstract class UltimateGoalOpMode extends OpMode8872 {
@@ -22,8 +16,10 @@ abstract class UltimateGoalOpMode extends OpMode8872 {
     public static int wobbleGoalAngularSpeed = -220;
     protected static final int wobbleGoalMotorGearRatio = 2;
     protected static int wobbleGoalMotorTicksPerDegree = (1425 / 360) * wobbleGoalMotorGearRatio;
-    public static double wobbleServoMax = 0.99;
-
+    public static double wobbleServoMin = Servo.MIN_POSITION;
+    public static double wobbleServoMax = 0.50;
+    public static double katanaServoMin = 0.0;
+    public static double katanaServoMax = 1.0;
 
     protected DcMotorEx shooterFront, shooterBack, wobbleGoalMotor;
     protected DcMotor intake;
@@ -87,19 +83,20 @@ abstract class UltimateGoalOpMode extends OpMode8872 {
         telemetry.addData("WobbleGoalMotorMode: ", wobbleGoalMotor::getMode);
     }
 
-    protected void setLauncherRPM(int RPM){
+    protected void setLauncherRPM(int RPM) {
         shooterBack.setVelocity(RPM * 28.0 / 60); //convert to encoder ticks
         shooterFront.setVelocity(RPM * 28.0 / 60);
     }
+
     protected void dropWobbleGoal() {
         wobbleGoalMechanism(-185);
         wobbleServo.setPosition(wobbleServoMax);
         whileSleep(1000);
     }
 
-    protected void resetWobbleGoal(int targetDegrees){
+    protected void resetWobbleGoal(int targetDegrees) {
         targetDegrees = Math.abs(targetDegrees);
-        wobbleServo.setPosition(Servo.MIN_POSITION);
+        wobbleServo.setPosition(wobbleServoMin);
         whileSleep(1000);
         wobbleGoalMechanism(-targetDegrees);
     }

@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.acmerobotics.dashboard.FtcDashboard;
-import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -74,7 +73,6 @@ public abstract class OpMode8872 extends OpMode {
         brake();
 
 
-
         initHardwareDevices();
 
         composeTelemetry();
@@ -112,7 +110,7 @@ public abstract class OpMode8872 extends OpMode {
     }
 
     protected void mechanumDrive(boolean slowMode, boolean xDisable, boolean yDisable) {
-        double horizontal = -gamepad1.left_stick_x;
+        double horizontal = gamepad1.left_stick_x;
         double vertical = -gamepad1.left_stick_y;
         double angle = -gamepad1.right_stick_x;
 

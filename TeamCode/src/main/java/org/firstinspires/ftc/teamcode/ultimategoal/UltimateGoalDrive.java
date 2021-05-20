@@ -1,9 +1,6 @@
-  package org.firstinspires.ftc.teamcode.ultimategoal;
+package org.firstinspires.ftc.teamcode.ultimategoal;
 
-import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
-import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
-import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -12,9 +9,8 @@ import org.firstinspires.ftc.teamcode.ultimategoal.rrunner.UltimateGoalDriveCons
 import org.firstinspires.ftc.teamcode.util.Timer;
 
 import static org.firstinspires.ftc.teamcode.ultimategoal.UltimateGoalAutoConstants.*;
-import static org.firstinspires.ftc.teamcode.ultimategoal.UltimateGoalAutoConstants.powerShotAngle3;
 
-  @TeleOp
+@TeleOp
 @Config
 public class UltimateGoalDrive extends UltimateGoalOpMode {
 
@@ -23,9 +19,11 @@ public class UltimateGoalDrive extends UltimateGoalOpMode {
     public static int launcherRPMSpeed = 1900;
     public static int launcherRPMSpeed2 = 2200; // used to be 2200
     private static double intakePower = 0.5;
-    static double[] powerShotAngles2(){
+
+    static double[] powerShotAngles2() {
         return new double[]{powerShotAngle1, powerShotAngle2 - powerShotAngle1, powerShotAngle3 - powerShotAngle2, -powerShotAngle3 + powerShotAngle1};
     }
+
     public static int boxServoTime = 1000;
     public static int kickerServoTime = 750;
     public static int kickerServoPowerShotTime = 1500;
@@ -34,7 +32,7 @@ public class UltimateGoalDrive extends UltimateGoalOpMode {
     // These values might not update, maybe have an update function to reset the values of the class
     private final Timer boxServoTimer = new Timer(boxServoTime); // try 300
     private final Timer kickerServoTimer = new Timer(kickerServoTime); // try 200
-      private final Timer kickerServoPowerShotTimer = new Timer(kickerServoPowerShotTime);
+    private final Timer kickerServoPowerShotTimer = new Timer(kickerServoPowerShotTime);
     private final Timer kickerServoTimer2 = new Timer(kickerServoTime2); // try 400
     private final Timer wobbleGoalPickUpTimer = new Timer(700);
     // previous 1500
@@ -45,12 +43,12 @@ public class UltimateGoalDrive extends UltimateGoalOpMode {
     private ShooterState shooterState = ShooterState.IDLE;
 
     private boolean slowMode, controlMode = false;
-    private boolean lastAState, lastBumperState, lastDPadDown, lastDPadUp, lastRightStickButton, lastYState, lastDpadLeft,lastDpadRight, lastStickButton;
+    private boolean lastAState, lastBumperState, lastDPadDown, lastDPadUp, lastRightStickButton, lastYState, lastDpadLeft, lastDpadRight, lastStickButton;
     private boolean shooterEnabled = false;
     private double acceleratePower = 0;
     private int j = 0;
 
-    public void initHardwareDevices(){
+    public void initHardwareDevices() {
         super.initHardwareDevices();
         if (drive == null) {
             drive = new SampleMecanumDrive(hardwareMap, UltimateGoalDriveConstants.INSTANCE);
@@ -61,7 +59,7 @@ public class UltimateGoalDrive extends UltimateGoalOpMode {
 
     @Override
     public void loop() {
-          if (gamepad1.y) {
+        if (gamepad1.y) {
             acceleratePower = 0;
         }
         if (!drive.isBusy() && (gamepad1.x || acceleratePower != 0)) {
@@ -70,7 +68,7 @@ public class UltimateGoalDrive extends UltimateGoalOpMode {
             mechanumDrive(slowMode, false, false);
         }
 
-        if(gamepad1.right_stick_button && !lastRightStickButton){
+        if (gamepad1.right_stick_button && !lastRightStickButton) {
             drive.setPoseEstimate(UltimateGoalAutoConstants.resetPosition());
         }
         lastRightStickButton = !lastRightStickButton;
@@ -92,9 +90,9 @@ public class UltimateGoalDrive extends UltimateGoalOpMode {
         lastYState = gamepad1.y;
 
         if (gamepad1.left_stick_button && !lastStickButton && katanaServo.getPosition() == 1) {
-            katanaServo.setPosition(0);
+            katanaServo.setPosition(katanaServoMin);
         } else if (gamepad1.left_stick_button && !lastStickButton && katanaServo.getPosition() == 0) {
-            katanaServo.setPosition(1);
+            katanaServo.setPosition(katanaServoMax);
         }
         lastStickButton = gamepad1.left_stick_button;
 
@@ -108,7 +106,7 @@ public class UltimateGoalDrive extends UltimateGoalOpMode {
         lastBumperState = gamepad1.left_bumper || gamepad1.right_bumper;
 
         shooterEnabled = (gamepad1.left_trigger != 0 && gamepad1.right_trigger == 0)
-            || (gamepad1.left_trigger == 0 && gamepad1.right_trigger != 0);
+                || (gamepad1.left_trigger == 0 && gamepad1.right_trigger != 0);
 
         wobbleGoalExecution();
 
@@ -116,7 +114,7 @@ public class UltimateGoalDrive extends UltimateGoalOpMode {
             System.out.println("Position: " + drive.getPoseEstimate());
             System.out.println("Traveling to " + UltimateGoalAutoConstants.towerGoalPosition());
             drive.followTrajectoryAsync(drive.trajectoryBuilder(drive.getPoseEstimate())
-                .lineToLinearHeading(UltimateGoalAutoConstants.towerGoalPosition()).build());
+                    .lineToLinearHeading(UltimateGoalAutoConstants.towerGoalPosition()).build());
             j = 0;
 //            drive.turnAsync(-Math.toDegrees(drive.getExternalHeading())); // turn to 0
         }
@@ -126,8 +124,8 @@ public class UltimateGoalDrive extends UltimateGoalOpMode {
             drive.turn(powerShotAngles2()[j]); // angle will be tuned later on
             telemetry.addData("Heading: ", drive.getRawExternalHeading());
             j++;
-            if(j >= 4){
-                j=0;
+            if (j >= 4) {
+                j = 0;
             }
         }
         lastDpadRight = gamepad1.dpad_right;
@@ -218,7 +216,7 @@ public class UltimateGoalDrive extends UltimateGoalOpMode {
         if (gamepad1.dpad_up && !lastDPadUp && !controlMode) {
             telemetry.addData("", "Setting Servo Pick");
             System.out.println("Setting Servo Pick");
-            wobbleServo.setPosition(Servo.MIN_POSITION);
+            wobbleServo.setPosition(wobbleServoMin);
             wobbleGoalPickUpTimer.start();
         }
         lastDPadUp = gamepad1.dpad_up;

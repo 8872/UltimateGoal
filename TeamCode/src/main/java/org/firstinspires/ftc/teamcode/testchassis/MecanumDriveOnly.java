@@ -3,8 +3,10 @@ package org.firstinspires.ftc.teamcode.testchassis;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.teamcode.OpMode8872;
+import org.firstinspires.ftc.teamcode.rrunner.SampleMecanumDrive;
+import org.firstinspires.ftc.teamcode.testchassis.rrunner.TestChassisDriveConstants;
 
-@Disabled
+//@Disabled
 @TeleOp
 public class MecanumDriveOnly extends OpMode8872 {
 
@@ -41,6 +43,8 @@ public class MecanumDriveOnly extends OpMode8872 {
     }
 
     @Override
-    protected void initHardwareDevices() {}
+    protected void initHardwareDevices() {
+        drive = new SampleMecanumDrive(hardwareMap, TestChassisDriveConstants.INSTANCE);
+    }
 
 }

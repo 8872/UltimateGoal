@@ -8,7 +8,8 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 public class ServoTester extends UltimateGoalOpMode {
 
     public static double boxPosition = 0;
-public static double intakeSpeed = 0.5;
+    public static double wobbleGoalPosition = 0;
+    public static double intakeSpeed = 0.5;
 
     @Override
     public void loop() {

@@ -2,8 +2,6 @@ package org.firstinspires.ftc.teamcode.ultimategoal;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
-import com.acmerobotics.roadrunner.geometry.Vector2d;
-import com.qualcomm.robotcore.hardware.PIDCoefficients;
 
 @Config
 public class UltimateGoalAutoConstants {
@@ -39,23 +37,55 @@ public class UltimateGoalAutoConstants {
     static Pose2d startingPosition() {
         return pose2d(startingPose);
     }
+
     static Pose2d powerShotPosition() {
         return pose2d(powerShotPose);
     }
-    static Pose2d towerGoalPosition() { return pose2d(towerGoal); }
-    static Pose2d parkPosition() { return pose2d(parkPose);}
-    static Pose2d squareAPosition() {return pose2d(squareAPose);}
-    static Pose2d squareBPosition() {return pose2d(squareBPose);}
-    static Pose2d squareCPosition() {return pose2d(squareCPose);}
-    static Pose2d squareA2Position() {return pose2d(squareA2Pose);}
-    static Pose2d squareB2Position() {return pose2d(squareB2Pose);}
-    static Pose2d squareC2Position() {return pose2d(squareC2Pose);}
-    static Pose2d wobble2Position() {return pose2d(wobble2Pose);}
-    static Pose2d resetPosition() {return pose2d(resetPose);}
 
-    static double[] powerShotAngles(){
+    static Pose2d towerGoalPosition() {
+        return pose2d(towerGoal);
+    }
+
+    static Pose2d parkPosition() {
+        return pose2d(parkPose);
+    }
+
+    static Pose2d squareAPosition() {
+        return pose2d(squareAPose);
+    }
+
+    static Pose2d squareBPosition() {
+        return pose2d(squareBPose);
+    }
+
+    static Pose2d squareCPosition() {
+        return pose2d(squareCPose);
+    }
+
+    static Pose2d squareA2Position() {
+        return pose2d(squareA2Pose);
+    }
+
+    static Pose2d squareB2Position() {
+        return pose2d(squareB2Pose);
+    }
+
+    static Pose2d squareC2Position() {
+        return pose2d(squareC2Pose);
+    }
+
+    static Pose2d wobble2Position() {
+        return pose2d(wobble2Pose);
+    }
+
+    static Pose2d resetPosition() {
+        return pose2d(resetPose);
+    }
+
+    static double[] powerShotAngles() {
         return new double[]{powerShotAngle1, powerShotAngle2 - powerShotAngle1, powerShotAngle3 - powerShotAngle2};
     }
+
     private static Pose2d pose2d(String s) {
         String[] split = s.split(",");
         return new Pose2d(Double.parseDouble(split[0].trim()), Double.parseDouble(split[1].trim()), Math.toRadians(Double.parseDouble(split[2].trim())));

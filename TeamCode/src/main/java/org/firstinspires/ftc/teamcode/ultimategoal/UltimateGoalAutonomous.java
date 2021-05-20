@@ -5,7 +5,6 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
@@ -25,7 +24,9 @@ import static org.firstinspires.ftc.teamcode.ultimategoal.UltimateGoalAutoConsta
 @Autonomous
 public class UltimateGoalAutonomous extends UltimateGoalOpMode {
 
-    { msStuckDetectInit = 10_000; }
+    {
+        msStuckDetectInit = 10_000;
+    }
 
     private static final String VUFORIA_KEY = "AY2fDeT/////AAABmSQo7FZp407MmUmu4W/djRxOWPSXLk/0nKrebNwBqKhKa7iBAhQth0OvoRSpG5xwPtWE90+JwjuAN4n63OCkZS4SrWnGZTtx6UR5g2fiJ/NEmte4NJjBNPA43DQiWvM9tT5960+i0Az6HO5jT/3Ert6ucsjj+eya6gdWaKzAlVknYJrgCeSpCWhpwvwiy1BVkuqsMRRC1MF77uaUtrt04HFzckOOJ4HMTUXLvCyN+EdmxuIqIzNEH3y4LSfoK+HDBaffqNYaRGlQHm3xDdimZ/Uw57NpO+96zwcPA8wvoiEjJ1x/oJ+8o7sO0EgULM8t73chtlzmM9YBkZUM1VMapzrUeunrULin9M8hj1r2SMPI";
     private static final ExecutorService pool = Executors.newSingleThreadExecutor();

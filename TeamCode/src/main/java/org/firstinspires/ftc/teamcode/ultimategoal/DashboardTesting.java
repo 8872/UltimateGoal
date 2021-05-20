@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.ultimategoal;
 
-import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 
 public class DashboardTesting {
@@ -12,9 +11,9 @@ public class DashboardTesting {
     protected int b2 = 0;
     private int b3 = 0;
 
-    public static double[] c1 = {2,3,4};
+    public static double[] c1 = {2, 3, 4};
 
-    public static Pose2d d1 = new Pose2d(0,1,2);
+    public static Pose2d d1 = new Pose2d(0, 1, 2);
 
     public static String e1 = "Hello Jack I am onto you";
 }
